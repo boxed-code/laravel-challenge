@@ -1,0 +1,35 @@
+{
+    "name": "boxed-code/laravel-two-factor",
+    "description": "Middleware based, multi-provider two factor authentication",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Oliver Green",
+            "email": "green2go@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {},
+    "require-dev": {
+        "orchestra/testbench": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "BoxedCode\\Laravel\\TwoFactor\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BoxedCode\\Laravel\\TwoFactor\\TwoFactorServiceProvider"
+            ]
+        }
+    }
+}
