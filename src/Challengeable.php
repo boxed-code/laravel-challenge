@@ -4,7 +4,7 @@ namespace BoxedCode\Laravel\TwoFactor;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-trait TwoFactorAuthentication
+trait Challengeable
 {
     public function getDefaultTwoFactorAuthMethod()
     {
