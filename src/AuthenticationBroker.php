@@ -5,181 +5,182 @@
 // 
 namespace BoxedCode\Laravel\TwoFactor;
 
-use BoxedCode\Laravel\TwoFactor\EnrollmentRepository as Enrollment;
-use BoxedCode\Laravel\TwoFactor\Providers\ProviderManager as Providers;
-use BoxedCode\Laravel\TwoFactor\TokenRepository as Tokens;
+use BoxedCode\Laravel\TwoFactor\Contracts\AuthenticationBroker as BrokerContract;
+use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
+use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
+use BoxedCode\Laravel\TwoFactor\Contracts\Enrolment;
+use BoxedCode\Laravel\TwoFactor\Methods\MethodManager;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Illuminate\Support\Str;
 
-class AuthenticationBroker
+class AuthenticationBroker implements BrokerContract
 {
-    const USER_NOT_ENROLLED = 'user_not_enrolled',
-          INVALID_PROVIDER = 'invalid_provider',
-          INVALID_TOKEN = 'invalid_token',
-          INVALID_CODE = 'invalid_code',
-          CODE_VERIFIED = 'code_verified',
-          USER_CANNOT_ENROL = 'user_cannot_enrol',
-          USER_CHALLENGED = 'challenged',
-          USER_ENROLED = 'user_enroled',
-          PROVIDER_REQUIRES_SETUP = 'provider_requires_setup';
-
-    protected $providers;
-
-    protected $tokens; 
-
-    protected $enrollment;
+    protected $methods;
 
     protected $config;
 
     protected $dispatcher;
 
-    public function __construct(Providers $providers, Tokens $tokens, Enrollment $enrollment, array $config)
+    public function __construct(MethodManager $methods, array $config) 
     {
-        $this->providers = $providers;
-
-        $this->tokens = $tokens;
-
-        $this->enrollment = $enrollment;
+        $this->methods = $methods;
 
         $this->config = $config;
     }
 
-    public function defaultProvider(Challengeable $user)
+    protected function getEnrolment(Challengeable $user, $method_name)
     {
-        $default = $this->providers->getDefaultProvider();
-
-        $userProviders = $this->enrolledProviders($user);
-
-        $defaultProviders = array_filter($userProviders, function($item) use ($default) {
-            return $default === $item['name'];
-        });
-
-        return count($defaultProviders) > 0 ? 
-            $defaultProviders['name'] : $default;
+        return $user->enrolments()
+            ->method($method_name)
+            ->first();
     }
 
-    public function enabledProviders()
+    protected function beginEnrolmentChallengeOrEnrol(Enrolment $enrolment)
     {
-        return $this->providers->getEnabledProviders();
-    }
-
-    public function enrolledProviders(Challengeable $user)
-    {
-        $enrollments = $this->enrollment->enrollments($user->id);
-
-        $list = [];
-
-        foreach ($enrollments as $enrollment) {
-            $label = str_replace(
-                ['-', '_'], 
-                ' ', 
-                Str::title($enrollment['provider'])
+        // If the method requires a pre-enrolment challenge, we run the 
+        // challenge routine and return the response.
+        if ($this->method($enrolment->method)->requiresEnrolmentChallenge()) {
+            return $this->challenge(
+                $enrolment->user, 
+                $enrolment->method, 
+                Challenge::PURPOSE_ENROLMENT
             );
-
-            $list[$enrollment['provider']] = $label;
         }
 
-       return $list;
+        // Otherwise, if the method requires no setup and no pre-enrolment 
+        // challenge, we run the enrolment completion routine.
+        return $this->enrol($enrolment->user, $enrolment->method);
     }
 
-    public function canEnroll(Challengeable $user, $provider_name)
+    public function begin(Challengeable $user, $method_name, array $meta = [])
     {
-        return (
-            $this->validProviderName($provider_name) &&
-            !$this->enrolled($user, $provider_name) &&
-            $user->canEnrollInTwoFactorAuth($provider_name)
+        // Retrieve a method instance for the requested method name.
+        if (!($method = $this->method($method_name))) {
+            return static::INVALID_METHOD;
+        }
+        
+        $user->enrolments()->method($method_name)->delete();
+
+        // Verify that the use can enrol in two factor 
+        // authentication for the requested provider.
+        if (!$this->canEnrol($user, $method_name)) {
+            return static::USER_CANNOT_ENROL;
+        }
+
+        // Flush ALL previous enrolments for this method.
+        $user->enrolments()->method($method_name)->delete();
+
+        // Create the enrolment for this attempt.
+        $enrolment = $user->enrolments()->create([
+            'user_id' => $user->getKey(),
+            'method' => $method_name,
+            'meta' => $meta,
+        ]);
+
+        // If the requested method requires setup return 
+        // the appropriate response.
+        if ($method->requiresEnrolmentSetup()) {
+            return static::METHOD_REQUIRES_SETUP;
+        }
+
+        return $this->beginEnrolmentChallengeOrEnrol($enrolment);
+    }
+
+    public function beforeSetup(Challengeable $user, $method_name)
+    {
+        if (!($enrolment = $this->getEnrolment($user, $method_name))) {
+            return static::INVALID_ENROLMENT;
+        }
+
+        // We call the method instances preparation method so that it 
+        // can make any calls or generate necessary before the setup.
+        return $this->method($method_name)->beforeSetup(
+            $user, $enrolment->meta
         );
     }
 
-    public function requiresEnrolmentChallenge($provider_name)
+    public function setup(Challengeable $user, $method_name, $token = null, array $meta = [])
     {
-        $provider = $this->provider($provider_name);
+        if (!($enrolment = $this->getEnrolment($user, $method_name))) {
+            return static::INVALID_ENROLMENT;
+        }
 
-        return $provider->requiresEnrolmentChallenge();
-    }
+        $enrolment->fill(['token' => $token, 'setup_at' => now()])->save();
 
-    public function requiresSetup($provider_name)
-    {
-        $provider = $this->provider($provider_name);
-
-        return $provider->requiresEnrolmentSetup();
-    }
-
-    public function enrolling(Challengeable $user, $provider_name)
-    {
-        return count($this->tokens->getByChallengeableId($user->id, true)) > 0;
-    }
-
-    public function enrolled(Challengeable $user, $provider_name)
-    {
-        return $this->enrollment->enrolled(
-            $user->id, $provider_name
+        $this->method($method_name)->setup(
+            $user, $token, $meta
         );
+
+        return $this->beginEnrolmentChallengeOrEnrol($enrolment);
     }
 
-    public function validProviderName($provider_name)
+    public function enrol(Challengeable $user, $method)
     {
-        $providers = array_keys($this->enabledProviders());
+        if ($enrolment = $user->enrolments()->enrolling($method)->first()) {
+            $enrolment->fill(['enrolled_at' => now()])->save();
 
-        return in_array($provider_name, $providers);
+            $this->event(new Events\Enrolled($enrolment));
+            
+            return static::USER_ENROLLED;
+        }
+
+        return static::INVALID_ENROLMENT;
     }
 
-    public function hasMultipleProviders(Challengeable $user)
+    public function disenrol(Challengeable $user, $method)
     {
-        return count($this->enrolledProviders($user)) > 1;
+        //
     }
 
-    protected function verifyEnrolment(Challengeable $user, $provider_name, $is_enrolment = false)
+    public function challenge(Challengeable $user, $method_name, $purpose, array $meta = [])
     {
-        if (!$is_enrolment && !$this->enrolled($user, $provider_name)) {
+        // Retrieve a method instance for the requested method name.
+        if (!($method = $this->method($method_name))) {
+            return static::INVALID_METHOD;
+        }
+
+        // Flush ALL previous challenges.
+        $user->challenges()->method($method_name)->delete();
+
+        // Next, we check that the user is either enrolled or that 
+        // this challenge is part of the enrolment process.
+        if (!$this->canChallenge($user, $method_name, $purpose)) {
             return static::USER_NOT_ENROLLED;
         }
 
-        $this->tokens->gc(
-            $user->id, 
-            $this->config['tokens']['lifetime']
-        );
-    }
+        // Create the challenge, call the method 
+        // instance and fire the challenged event.
+        $challenge = $user->challenges()->create([
+            'id' => $this->generateChallengeUuid(),
+            'token' => $code = $method->code(),
+            'method' => $method_name,
+            'purpose' => $purpose,
+            'challenged_at' => now(),
+            'meta' => $meta,
+        ]);
 
-    public function challenge(Challengeable $user, $provider_name, $session_id, $is_enrolment = false)
-    {
-        if ($response = $this->verifyEnrolment($user, $provider_name, $is_enrolment)) {
-            return $response;
-        }
-
-        $provider = $this->provider($provider_name);
-
-        $token = $this->tokens->create(
-            $code = $provider->code(),
-            $session_id,
-            $user->id,
-            $provider_name,
-            $is_enrolment
-        );
-
-        $provider->challenge($user, $code);
+        $method->challenge($user, $code);
         
-        $this->event(new Events\Challenged($user, $token));
+        $this->event(new Events\Challenged($challenge));
+
+        return static::USER_CHALLENGED;
     }
 
-    public function verify(Challengeable $user, $provider_name, $code, $session_id, $is_enrolment = false)
+    public function verify(Challengeable $user, $method, $token)
     {
-        if ($response = $this->verifyEnrolment($user, $provider_name, $is_enrolment)) {
-            return $response;
+        // Check that we have a valid challenge for the user and method.
+        if (!($challenge = $user->challenges()->pending($method)->first())) {
+            return static::INVALID_CHALLENGE;
         }
 
-        $provider = $this->provider($provider_name);
+        if ($challenge['token'] === $token) {
 
-        if (!($token = $this->tokens->getBySessionId($session_id, $is_enrolment))) {
-            return static::INVALID_TOKEN;
-        }
+            $challenge->fill(['verified_at' => now()])->save();
 
-        if ($token['token'] === $code) {
+            $this->event(new Events\Verified($challenge));
 
-            if ('1' === $token['is_enrollment_token']) {
-                return $provider->requiresSetup() ?
-                    static::PROVIDER_REQUIRES_SETUP :
-                    $this->enrollment($user, $provider_name);
+            if (Challenge::PURPOSE_ENROLMENT === $challenge->purpose) {
+                return $this->enrol($user, $method);
             }
 
             return static::CODE_VERIFIED;
@@ -188,42 +189,37 @@ class AuthenticationBroker
         return static::INVALID_CODE;
     }
 
-    public function enroll(Challengeable $user, $provider_name, $session_id)
+    public function canChallenge(Challengeable $user, $method, $purpose)
     {
-        if (!$this->validProviderName($provider_name)) {
-            return static::INVALID_PROVIDER;
+        $isEnrolling = (Challenge::PURPOSE_ENROLMENT === $purpose);
+        $isUserEnrolled = (1 === $user->enrolments()->enrolled($method)->count());
+
+        if ($isEnrolling || $isUserEnrolled) {
+            return true;
         }
 
-        if (!$this->canEnroll($user, $provider_name)) {
-            return static::USER_CANNOT_ENROL;
-        }
-
-        $this->tokens->flush($user->id);
-
-        if ($this->requiresEnrolmentChallenge($provider_name)) {
-            $response = $this->challenge(
-                $user, 
-                $provider_name, 
-                $session_id,
-                $is_enrollment = true
-            );
-
-            return static::USER_CHALLENGED;
-        }
-
-        return $this->broker()->requiresSetup($provider_name) ?
-            static::PROVIDER_REQUIRES_SETUP :
-            $this->enrollment($user, $provider_name);
+        return false;
     }
 
-    public function enrollment(Challengeable $user, $provider_name)
+    public function canEnrol(Challengeable $user, $method)
     {
-        return static::USER_ENROLED;
+        return (
+            $user->canEnrolInTwoFactorAuth($method) &&
+            0 === $user->enrolments()->enroled()->count()
+        );  
     }
 
-    protected function provider($provider_name)
+    public function getEnrolledAuthDriverList(Challengeable $user)
     {
-        return $this->providers->provider($provider_name);
+        return $user->enrolments()->enrolled()->get()
+            ->keyBy('provider')->map(function($enrolment) {
+                return $enrolment->label;
+            });
+    }
+
+    protected function generateChallengeUuid()
+    {
+        return Str::uuid();
     }
 
     public function setEventDispatcher(EventDispatcher $events)
@@ -248,8 +244,15 @@ class AuthenticationBroker
         }
     }
 
-    public function providers()
+    /**
+     * Dynamically call the default method instance.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
     {
-        return $this->providers;
+        return $this->methods->$method(...$parameters);
     }
 }

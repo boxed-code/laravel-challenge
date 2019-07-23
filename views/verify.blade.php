@@ -10,7 +10,6 @@
         @endforeach
     @endif
     <form method="POST" action="{{ url($verificationPath) }}">
-        <input type="hidden" name="is_enroling" value="{{ $isEnroling }}">
         <input type="text" name="code" placeholder="Code">
         <button type="submit">Verify</button>
         @csrf

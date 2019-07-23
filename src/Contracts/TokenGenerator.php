@@ -1,6 +1,6 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor;
+namespace BoxedCode\Laravel\TwoFactor\Contracts;
 
 interface TokenGenerator
 {

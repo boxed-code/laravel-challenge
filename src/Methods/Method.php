@@ -1,10 +1,10 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Providers;
+namespace BoxedCode\Laravel\TwoFactor\Methods;
 
-use BoxedCode\Laravel\TwoFactor\NumericTokenGenerator;
+use BoxedCode\Laravel\TwoFactor\Generators\NumericTokenGenerator;
 
-abstract class BaseProvider implements Provider
+abstract class Method
 {
     protected $config;
 

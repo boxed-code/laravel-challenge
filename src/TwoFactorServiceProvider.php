@@ -25,34 +25,13 @@ class TwoFactorServiceProvider extends ServiceProvider
             'two_factor'
         );
 
-        $this->app->bind(TokenRepository::class, function($app) {
-            return new DatabaseTokenRepository(
-                $app['db']->connection(),
-                config('two_factor.tokens.table_name')
-            );
-        });
-
-        $this->app->bind(EnrollmentRepository::class, function($app) {
-            return new EloquentEnrollmentRepository(
-                new Models\Enrollment
-            );
-        });
-
         $this->app->bind(AuthenticationBroker::class, function($app) {
-            $providerManager = new Providers\ProviderManager($app);
+            $manager = new Methods\MethodManager($app);
 
-            $tokens = $app->make(TokenRepository::class);
+            $config = config('two_factor', []);
 
-            $enrollment = $app->make(EnrollmentRepository::class);
-
-            $config = $app['config']->get('two_factor');
-
-            return (new AuthenticationBroker(
-                $providerManager,
-                $tokens,
-                $enrollment,
-                $config
-            ))->setEventDispatcher($app['events']);
+            return (new AuthenticationBroker($manager, $config))
+                ->setEventDispatcher($app['events']);
         });
 
         $this->app->alias(AuthenticationBroker::class, 'auth.tfa');

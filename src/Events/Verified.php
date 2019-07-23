@@ -4,7 +4,7 @@ namespace BoxedCode\Laravel\TwoFactor\Events;
 
 use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 
-class Challenged
+class Verified
 {    
     public $challenge;
 

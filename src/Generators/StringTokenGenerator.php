@@ -1,6 +1,8 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor;
+namespace BoxedCode\Laravel\TwoFactor\Generators;
+
+use BoxedCode\Laravel\TwoFactor\Contracts\TokenGenerator;
 
 class StringTokenGenerator implements TokenGenerator
 {

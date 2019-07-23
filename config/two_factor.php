@@ -6,20 +6,18 @@ use BoxedCode\Laravel\TwoFactor\StringTokenGenerator;
 
 return [
 
-    'user_model' => \App\User::class,
-
-    'tokens' => [
-        'table_name' => 'two_factor_tokens',
-        'lifetime' => env('TWO_FACTOR_TOKEN_LIFETIME', 3600)
+    'models' => [
+        'challenge' => \BoxedCode\Laravel\TwoFactor\Models\Challenge::class,
+        'enrolment' => \BoxedCode\Laravel\TwoFactor\Models\Enrolment::class,
     ],
 
-    'default' => 'email',
+    'lifetime' => env('TWO_FACTOR_LIFETIME', 3600),
 
     'enabled' => [
         'email'
     ],
 
-    'providers' => [
+    'methods' => [
         'email' => [
             'provider' => 'notification',
             'channels' => ['mail'],
