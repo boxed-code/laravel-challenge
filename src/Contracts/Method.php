@@ -14,5 +14,4 @@ interface Method
     public function verify(Challengeable $user, $token);
     public function requiresEnrolmentChallenge();
     public function requiresEnrolmentSetup();
-    //public function generateChallengeToken(): string;
 }

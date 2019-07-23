@@ -8,7 +8,7 @@ class MethodNameFormatter
 {
     public static function toLabel($method_name)
     {
-        $title = Str::title($enrollment['provider']);
+        $title = Str::title($method_name);
         
         return str_replace(['-', '_'], ' ', $title);
     }

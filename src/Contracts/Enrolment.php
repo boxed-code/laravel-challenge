@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 interface Enrolment
 {
-    public function getEnrolmentLabelAttribute();
+    public function getLabelAttribute();
     public function getKey();
     public function findFor($user_id, $method);
     public function user(): BelongsTo;

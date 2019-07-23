@@ -1,8 +1,11 @@
 <?php
 
-// @todo Fix enrollment spelling mistake, should be enrolment!
-// @todo change DB token for code
-// 
+// @todo Disenrolment
+// @todo enrol() call to method enrol()
+// @todo Setup data handling
+// @todo Encrypt enrolment tokens
+// @todo Models should have tokens hidden
+
 namespace BoxedCode\Laravel\TwoFactor;
 
 use BoxedCode\Laravel\TwoFactor\Contracts\AuthenticationBroker as BrokerContract;
@@ -205,14 +208,14 @@ class AuthenticationBroker implements BrokerContract
     {
         return (
             $user->canEnrolInTwoFactorAuth($method) &&
-            0 === $user->enrolments()->enroled()->count()
+            0 === $user->enrolments()->enrolled()->count()
         );  
     }
 
     public function getEnrolledAuthDriverList(Challengeable $user)
     {
         return $user->enrolments()->enrolled()->get()
-            ->keyBy('provider')->map(function($enrolment) {
+            ->keyBy('method')->map(function($enrolment) {
                 return $enrolment->label;
             });
     }

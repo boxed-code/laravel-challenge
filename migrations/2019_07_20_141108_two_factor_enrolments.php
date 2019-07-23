@@ -20,7 +20,7 @@ class TwoFactorEnrolments extends Migration
             $table->text('token')->nullable();
             $table->json('meta')->nullable();
             $table->timestamp('setup_at')->nullable();
-            $table->timestamp('enroled_at')->nullable();
+            $table->timestamp('enrolled_at')->nullable();
             $table->timestamps();
 
             $table->unique(['user_id', 'method'], 'unique_enrolment');

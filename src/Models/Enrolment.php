@@ -36,9 +36,11 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
 
     protected $casts = ['meta' => 'array'];
 
-    public function getEnrolmentLabelAttribute()
+    public function getLabelAttribute()
     {
-        return MethodNameFormatter::toLabel($this->method);
+        return MethodNameFormatter::toLabel(
+            $this->method
+        );
     }
 
     public function user(): BelongsTo
@@ -84,7 +86,7 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
     {
         $query->where('user_id', '=', $user_id)
             ->where('method', '=', $method)
-            ->whereIsNull('enroled_at')
+            ->whereIsNull('enrolled_at')
             ->where('created_at', '<=', now()->subSeconds($lifetime));
     }
 }

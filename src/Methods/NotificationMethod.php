@@ -11,12 +11,12 @@ class NotificationMethod extends Method implements MethodContract
 {
     public function requiresEnrolmentChallenge()
     {
-        return false;
+        return true;
     }
 
     public function requiresEnrolmentSetup()
     {
-        return false;
+        return true;
     }
 
     public function beforeSetup(Challengeable $user, array $paramters = [])
@@ -46,7 +46,7 @@ class NotificationMethod extends Method implements MethodContract
             $this->config['channels'] ?? []
         );
 
-        //$user->notify($notification);
+        $user->notify($notification);
     }
 
     public function verify(Challengeable $user, $token)
