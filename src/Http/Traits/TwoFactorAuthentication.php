@@ -7,5 +7,6 @@ trait TwoFactorAuthentication
     use EnrolsUsers, 
         ChallengesUsers, 
         SendsAndShowsErrors, 
-        RedirectPaths;
+        RedirectPaths,
+        BrokerAware;
 }

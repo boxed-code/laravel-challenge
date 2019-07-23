@@ -95,9 +95,4 @@ trait EnrolsUsers
     {
         return view('two_factor::enrolled');
     }
-
-    protected function broker()
-    {
-        return app('auth.tfa');
-    }
 }
