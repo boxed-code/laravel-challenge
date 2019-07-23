@@ -33,6 +33,8 @@ class Challenge extends Model implements ChallengeContract
         'meta',
     ];
 
+    protected $hidden = ['token'];
+
     protected $dates = ['challenged_at', 'verified_at'];
 
     protected $casts = ['meta' => 'array'];

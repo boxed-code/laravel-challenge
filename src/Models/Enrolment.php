@@ -32,9 +32,27 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
         'meta',
     ];
 
+    protected $hidden = ['token'];
+
     protected $dates = ['enrolled_at', 'setup_at'];
 
     protected $casts = ['meta' => 'array'];
+
+    public function getTokenAttribute()
+    {
+        if (!empty($this->attributes['token'])) {
+            return decrypt($this->attributes['token']);
+        }
+    }
+
+    public function setTokenAttribute($value)
+    {
+        if (!empty($value)) {
+            $value = encrypt($value);
+        }
+
+        $this->attributes['token'] = $value;
+    }
 
     public function getLabelAttribute()
     {
