@@ -1,5 +1,4 @@
 <?php
-// @todo Setup data handling
 // @todo Fix notification method token generator configuration
 // @todo allow developer to handle responses for custom purposes
 // @todo middleware
@@ -168,7 +167,6 @@ class AuthenticationBroker implements BrokerContract
         // Next, we check that the user is either enrolled or that 
         // this challenge is part of the enrolment process.
         if (!$this->canChallenge($user, $method_name, $purpose)) {
-            dd('sds');
             return static::USER_NOT_ENROLLED;
         }
 
@@ -178,7 +176,6 @@ class AuthenticationBroker implements BrokerContract
         // instance and fire the challenged event.
         $challenge = $user->challenges()->create([
             'id' => $this->generateChallengeUuid(),
-            'token' => $code = $method->code(),
             'method' => $method_name,
             'purpose' => $purpose,
             'challenged_at' => now(),
