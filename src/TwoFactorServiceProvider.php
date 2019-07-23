@@ -57,11 +57,11 @@ class TwoFactorServiceProvider extends ServiceProvider
             $this->get('/tfa/{method}/verify', 'Auth\TwoFactorAuthController@showVerificationForm');
             $this->post('/tfa/{method}/verify', 'Auth\TwoFactorAuthController@verify');
             $this->get('/tfa/{method}/enrol', 'Auth\TwoFactorAuthController@begin')->name('twofactor.enrol');
-            $this->get('/tfa/{method}/enrol/setup', 'Auth\TwoFactorAuthController@form');
+            $this->get('/tfa/{method}/enrol/setup', 'Auth\TwoFactorAuthController@showSetupForm');
             $this->post('/tfa/{method}/enrol/setup', 'Auth\TwoFactorAuthController@setup');
-            $this->get('/tfa/{method}/enrolled', 'Auth\TwoFactorAuthController@enrolled');
+            $this->get('/tfa/{method}/enrolled', 'Auth\TwoFactorAuthController@showEnrolled');
             $this->get('/tfa/{method}/disenrol', 'Auth\TwoFactorAuthController@disenrol')->name('twofactor.disenrol');
-            $this->get('/tfa/{method}/disenrolled', 'Auth\TwoFactorAuthController@disenrolled');
+            $this->get('/tfa/{method}/disenrolled', 'Auth\TwoFactorAuthController@showDisenrolled');
         });
 
         $this->publishes(

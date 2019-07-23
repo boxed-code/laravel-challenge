@@ -50,7 +50,7 @@ trait EnrolsUsers
         );
     }
 
-    public function form(Request $request, $method)
+    public function showSetupForm(Request $request, $method)
     {
         $response = $this->broker()->beforeSetup(
             $request->user(),
@@ -97,7 +97,7 @@ trait EnrolsUsers
         );
     }
 
-    public function enrolled()
+    public function showEnrolled()
     {
         return view('two_factor::enrolled');
     }
@@ -123,7 +123,7 @@ trait EnrolsUsers
         );
     }
 
-    public function disenrolled()
+    public function showDisenrolled()
     {
         return view('two_factor::disenrolled');
     }
