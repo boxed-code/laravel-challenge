@@ -51,14 +51,6 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
         );
     }
 
-    public function findFor($user_id, $method)
-    {
-        return staitc::query()
-            ->where('user_id', '=', $user_id)
-            ->where('method', '=', $method)
-            ->first();
-    }
-
     public function scopeMethod($query, $method)
     {
         $query->where('method', '=', $method);

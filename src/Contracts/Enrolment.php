@@ -8,7 +8,6 @@ interface Enrolment
 {
     public function getLabelAttribute();
     public function getKey();
-    public function findFor($user_id, $method);
     public function user(): BelongsTo;
     public function scopeMethod($query, $method);
     public function scopeEnrolled($query, $method = null);
