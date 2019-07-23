@@ -1,6 +1,6 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Http;
+namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
 trait TwoFactorAuthentication
 {

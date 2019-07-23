@@ -1,17 +1,12 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Http;
+namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
 trait RedirectPaths
 {
-    public function verificationPath($provider_name)
+    public function enrolmentPath($provider_name)
     {
-        return "/auth/tfa/$provider_name/verify";
-    }
-
-    public function verificationRedirectPath()
-    {
-        return '/';
+        return "/auth/tfa/$provider_name/enrol";
     }
 
     public function enrolmentSetupPath($provider_name)
@@ -27,6 +22,16 @@ trait RedirectPaths
     public function challengePath()
     {
         return '/auth/tfa/challenge';
+    }
+    
+    public function verificationPath($provider_name)
+    {
+        return "/auth/tfa/$provider_name/verify";
+    }
+
+    public function verificationRedirectPath()
+    {
+        return '/';
     }
 
     public function errorPath()
