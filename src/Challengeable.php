@@ -14,9 +14,11 @@ trait Challengeable
 
         $enrolments = $this->enrolments()->enrolled()->get();
 
-        return $enrolments->filter(function($item) use ($default) {
+        $enrolment = $enrolments->filter(function($item) use ($default) {
             return $default === $item['method'];
         })->first() ?? $enrolments->first();
+
+        return $enrolment ? $enrolment['method'] : false;
     }
 
     public function challenges(): HasMany

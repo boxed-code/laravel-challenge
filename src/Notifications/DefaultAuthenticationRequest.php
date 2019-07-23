@@ -43,7 +43,7 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
      *
      * @return sting
      */
-    protected function getNotificationContent()
+    protected function getNotificationPlainText()
     {
         return 'Your authentication code is: ' . $this->code . '.';
     }
@@ -57,7 +57,7 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                ->line($this->getNotificationContent());
+                ->line($this->getNotificationPlainText());
     }
 
     /**
@@ -69,7 +69,7 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'message' => $this->getNotificationContent()
+            'message' => $this->getNotificationPlainText()
         ];
     }
 }

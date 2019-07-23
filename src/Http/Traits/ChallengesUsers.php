@@ -3,6 +3,7 @@
 namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
 use BoxedCode\Laravel\TwoFactor\AuthenticationBroker;
+use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use Illuminate\Http\Request;
 use LogicException;
@@ -41,7 +42,9 @@ trait ChallengesUsers
         // we direct them straight to the verification process.
         if (1 === $enrolmentCount) {
             return $this->challengeAndRedirect(
-                $request->user()->getDefaultTwoFactorAuthMethod()
+                $request->user(),
+                $request->user()->getDefaultTwoFactorAuthMethod(),
+                $request->session()->get('_tfa_purpose', Challenge::PURPOSE_AUTH)
             );
         }
 
@@ -57,7 +60,9 @@ trait ChallengesUsers
 
     public function challenge(Request $request)
     {
-        $purpose =  $request->session()->get('_tfa_purpose', false);
+        $purpose =  $request->session()->get(
+            '_tfa_purpose', Challenge::PURPOSE_AUTH
+        );
 
         $request->validate([
             'method' => 'required|string'

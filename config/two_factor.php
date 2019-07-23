@@ -1,7 +1,4 @@
 <?php
-
-use BoxedCode\Laravel\TwoFactor\Notifications\DefaultAuthenticationRequest;
-use BoxedCode\Laravel\TwoFactor\NumericTokenGenerator;
 use BoxedCode\Laravel\TwoFactor\StringTokenGenerator;
 
 return [
@@ -25,8 +22,8 @@ return [
         ],
         'sms' => [
             'provider' => 'notification',
-            'channels' => 'twillio_sms',
-            'notification' => TwillioAuthenticationRequest::class,
+            'channels' => ['\NotificationChannels\Twilio\TwilioChannel'],
+            'notification' => \BoxedCode\Laravel\TwoFactor\Notifications\TwilioAuthenticationRequest::class,
         ],
     ]
     

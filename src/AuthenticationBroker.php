@@ -4,6 +4,7 @@
 // @todo Setup data handling
 // @todo Encrypt enrolment tokens
 // @todo Models should have tokens hidden
+// @todo Fix notification method token generator configuration
 
 namespace BoxedCode\Laravel\TwoFactor;
 
@@ -119,6 +120,8 @@ class AuthenticationBroker implements BrokerContract
     public function enrol(Challengeable $user, $method)
     {
         if ($enrolment = $user->enrolments()->enrolling($method)->first()) {
+            $this->method($method)->enrol($user);
+
             $enrolment->fill(['enrolled_at' => now()])->save();
 
             $this->event(new Events\Enrolled($enrolment));
@@ -217,7 +220,7 @@ class AuthenticationBroker implements BrokerContract
     {
         return (
             $user->canEnrolInTwoFactorAuth($method) &&
-            0 === $user->enrolments()->enrolled()->count()
+            0 === $user->enrolments()->enrolled($method)->count()
         );  
     }
 
