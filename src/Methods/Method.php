@@ -15,8 +15,8 @@ abstract class Method
 
     public function generator()
     {
-        if (isset($this->config['generator'])) {
-            return new $this->config['generator']();
+        if (isset($this->config['token_generator'])) {
+            return new $this->config['token_generator']();
         }
 
         return new NumericTokenGenerator();
