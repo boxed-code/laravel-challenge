@@ -18,10 +18,11 @@ trait Helpers
     public function setStateAttribute($value)
     {
         if (!empty($value)) {
-            $value = encrypt($value);
+            $this->attributes['state'] = encrypt($value);
+            return;
         }
 
-        $this->attributes['state'] = $value;
+        $this->attributes['state'] = null;
     }
 
     public function user(): BelongsTo
