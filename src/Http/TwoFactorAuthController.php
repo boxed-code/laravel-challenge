@@ -4,7 +4,7 @@ namespace BoxedCode\Laravel\TwoFactor\Http;
 
 use Illuminate\Routing\Controller;
 
-class TwoFactorAuthenticationController extends Controller
+class TwoFactorAuthController extends Controller
 {
     use Traits\TwoFactorAuthentication;
 }

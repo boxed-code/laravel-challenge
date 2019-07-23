@@ -3,6 +3,7 @@
 namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
 use BoxedCode\Laravel\TwoFactor\AuthenticationBroker;
+use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use Illuminate\Http\Request;
 use LogicException;
 
@@ -27,29 +28,45 @@ trait ChallengesUsers
 
     public function showMethodSelectionForm(Request $request)
     {
-        // If the user only has one enrolled authentication method, 
-        // we direct them straight to the verification process.
-        if (1 === $request->user()->enrolments()->enrolled()->count()) {
-            return $this->challengeAndRedirect(
-                $user->getDefaultTwoFactorAuthMethod()
-            );            
+        $enrolmentCount = $request->user()->enrolments()->enrolled()->count();
+
+        // Send an error if there are no enrolments for the current user.
+        if (0 === $enrolmentCount) {
+            return $this->sendErrorResponse(
+                'This user is not enroled in any two factor authentication methods.'
+            );
         }
 
+        // If the user only has one enrolled authentication method, 
+        // we direct them straight to the verification process.
+        if (1 === $enrolmentCount) {
+            return $this->challengeAndRedirect(
+                $request->user()->getDefaultTwoFactorAuthMethod()
+            );
+        }
+
+        $methods = $this->broker()->getEnrolledAuthDriverList(
+            $request->user()
+        );
+
         // Otherwise, we show them the method selection screen.
-        return view('two_factor::method')->withProviders(
-            $this->broker()->availableProviders($user)
-        )->with('challenge_path', $this->challengePath());
+        return view('two_factor::method')
+            ->with('methods', $methods)
+            ->with('challenge_path', $this->challengePath());
     }
 
     public function challenge(Request $request)
     {
+        $purpose =  $request->session()->get('_tfa_purpose', false);
+
         $request->validate([
             'method' => 'required|string'
         ]);
 
         return $this->challengeAndRedirect(
-            $request,
-            $request->get('method')
+            $request->user(),
+            $request->get('method'),
+            $purpose
         );
     }
 
@@ -60,7 +77,6 @@ trait ChallengesUsers
         $purpose =  $request->session()->get('_tfa_purpose', false);
 
         if (!$this->broker()->canChallenge($request->user(), $method, $purpose)) {
-            dd($method, $purpose);
             return $this->sendUserNotEnrolledResponse($method);
         }
 

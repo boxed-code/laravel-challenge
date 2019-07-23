@@ -6,27 +6,27 @@ trait RedirectPaths
 {
     public function enrolmentPath($provider_name)
     {
-        return "/auth/tfa/$provider_name/enrol";
+        return "/tfa/$provider_name/enrol";
     }
 
     public function enrolmentSetupPath($provider_name)
     {
-        return "/auth/tfa/$provider_name/enrol/setup";
+        return "/tfa/$provider_name/enrol/setup";
     }
 
     public function enrolledPath($provider_name)
     {
-        return "/auth/tfa/$provider_name/enrolled";
+        return "/tfa/$provider_name/enrolled";
     }
 
     public function challengePath()
     {
-        return '/auth/tfa/challenge';
+        return '/tfa/challenge';
     }
     
     public function verificationPath($provider_name)
     {
-        return "/auth/tfa/$provider_name/verify";
+        return "/tfa/$provider_name/verify";
     }
 
     public function verificationRedirectPath()
@@ -36,6 +36,6 @@ trait RedirectPaths
 
     public function errorPath()
     {
-        return '/auth/tfa/error';
+        return '/tfa/error';
     }
 }

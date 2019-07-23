@@ -8,7 +8,9 @@ trait Challengeable
 {
     public function getDefaultTwoFactorAuthMethod()
     {
-        $default = array_shift(config('two_factor.enabled', []));
+        $config = config('two_factor.enabled', []);
+        
+        $default = array_shift($config);
 
         $enrolments = $this->enrolments()->enrolled()->get();
 

@@ -2,6 +2,7 @@
 
 namespace BoxedCode\Laravel\TwoFactor;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
 class TwoFactorServiceProvider extends ServiceProvider
@@ -48,6 +49,19 @@ class TwoFactorServiceProvider extends ServiceProvider
             $this->packagePath('views'), 
             'two_factor'
         );
+
+        Router::macro('twoFactorAuth', function() {
+            $this->get('/tfa', 'Auth\TwoFactorAuthController@showMethodSelectionForm')->name('twofactor.challenge');
+            $this->get('/tfa/error', 'Auth\TwoFactorAuthController@showError');
+            $this->post('/tfa/challenge', 'Auth\TwoFactorAuthController@challenge')->name('twofactor.challenge.method');
+            $this->get('/tfa/{method}/verify', 'Auth\TwoFactorAuthController@showVerificationForm');
+            $this->post('/tfa/{method}/verify', 'Auth\TwoFactorAuthController@verify');
+            $this->get('/tfa/{method}/enrol', 'Auth\TwoFactorAuthController@begin')->name('twofactor.enrol');
+            $this->get('/tfa/{method}/enrol/setup', 'Auth\TwoFactorAuthController@form');
+            $this->post('/tfa/{method}/enrol/setup', 'Auth\TwoFactorAuthController@setup');
+            $this->get('/tfa/{method}/enrolled', 'Auth\TwoFactorAuthController@enrolled');
+            $this->get('/tfa/{method}/disenrol', 'Auth\TwoFactorAuthController@disenrol')->name('twofactor.disenrol');
+        });
 
         $this->publishes(
             [$this->packagePath('config/two_factor.php') => config_path('two_factor.php')], 
