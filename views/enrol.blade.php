@@ -10,7 +10,7 @@
         @endforeach
     @endif
     <form method="POST" action="{{ url($setupPath) }}">
-        <input type="text" name="test_method" placeholder="Test Data">
+        This view should be overridden by the notification provider.
         <button type="submit">Continue</button>
         @csrf
     </form>

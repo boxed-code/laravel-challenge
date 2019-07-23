@@ -5,17 +5,18 @@ namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 use BoxedCode\Laravel\TwoFactor\AuthenticationBroker;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
+use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorLogicException;
 use Illuminate\Http\Request;
-use LogicException;
 
 trait ChallengesUsers
 {
-    protected function challengeAndRedirect(Challengeable $user, $method, $purpose)
+    protected function challengeAndRedirect(Challengeable $user, $method, $purpose, array $data = [])
     {
         $response = $this->broker()->challenge(
             $user, 
             $method, 
-            $purpose
+            $purpose,
+            $data
         );
 
         if (AuthenticationBroker::USER_NOT_ENROLLED === $response) {
@@ -44,7 +45,8 @@ trait ChallengesUsers
             return $this->challengeAndRedirect(
                 $request->user(),
                 $request->user()->getDefaultTwoFactorAuthMethod(),
-                $request->session()->get('_tfa_purpose', Challenge::PURPOSE_AUTH)
+                $request->session()->get('_tfa_purpose', Challenge::PURPOSE_AUTH),
+                $request->all()
             );
         }
 
@@ -71,7 +73,8 @@ trait ChallengesUsers
         return $this->challengeAndRedirect(
             $request->user(),
             $request->get('method'),
-            $purpose
+            $purpose,
+            $request->all()
         );
     }
 
@@ -79,7 +82,9 @@ trait ChallengesUsers
     {
         // First, we check that the requested authentication method
         // is valid and that the user is enrolled into it.
-        $purpose =  $request->session()->get('_tfa_purpose', false);
+        $purpose = $request->session()->get('_tfa_purpose', Challenge::PURPOSE_AUTH);
+
+        $request->session()->keep('_tfa_purpose');
 
         if (!$this->broker()->canChallenge($request->user(), $method, $purpose)) {
             return $this->sendUserNotEnrolledResponse($method);
@@ -102,7 +107,7 @@ trait ChallengesUsers
         $response = $this->broker()->verify(
             $request->user(), 
             $method, 
-            $request->get('code')
+            $request->all()
         );
 
         switch ($response) 
@@ -110,6 +115,8 @@ trait ChallengesUsers
             case AuthenticationBroker::INVALID_CHALLENGE:
                 return $this->sendErrorResponse('The token is invalid.');
             case AuthenticationBroker::INVALID_CODE:
+                $request->session()->keep('_tfa_purpose');
+
                 return redirect()->back()->withErrors([
                     'code' => 'The code you entered was incorrect.'
                 ]);
@@ -125,7 +132,7 @@ trait ChallengesUsers
                 );
         }
 
-        throw new LogicException(
+        throw new TwoFactorLogicException(
             sprintf('Broker returned an invalid response. [%s]', $response)
         );
     }

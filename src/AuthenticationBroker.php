@@ -1,10 +1,10 @@
 <?php
-
-// @todo enrol() call to method enrol()
 // @todo Setup data handling
-// @todo Encrypt enrolment tokens
-// @todo Models should have tokens hidden
 // @todo Fix notification method token generator configuration
+// @todo allow developer to handle responses for custom purposes
+// @todo middleware
+// @todo allow custom views verywhere
+// @todo flush stale tokens
 
 namespace BoxedCode\Laravel\TwoFactor;
 
@@ -96,23 +96,24 @@ class AuthenticationBroker implements BrokerContract
         }
 
         // We call the method instances preparation method so that it 
-        // can make any calls or generate necessary before the setup.
-        return $this->method($method_name)->beforeSetup(
-            $user, $enrolment->meta
-        );
+        // can make any calls or generate necessary data before the setup.
+        return $this->method($method_name)->beforeSetup($user);
     }
 
-    public function setup(Challengeable $user, $method_name, $token = null, array $meta = [])
+    public function setup(Challengeable $user, $method_name, array $data = [])
     {
         if (!($enrolment = $this->getEnrolment($user, $method_name))) {
             return static::INVALID_ENROLMENT;
         }
 
-        $enrolment->fill(['token' => $token, 'setup_at' => now()])->save();
+        $state = $this->method($method_name)->setup($user, $enrolment->state, $data);
 
-        $this->method($method_name)->setup(
-            $user, $token, $meta
-        );
+        $enrolment->fill([
+            'setup_at' => now(),
+            'state' => array_merge_recursive(
+                $enrolment->state, $state
+            )
+        ])->save();
 
         return $this->beginEnrolmentChallengeOrEnrol($enrolment);
     }
@@ -120,9 +121,16 @@ class AuthenticationBroker implements BrokerContract
     public function enrol(Challengeable $user, $method)
     {
         if ($enrolment = $user->enrolments()->enrolling($method)->first()) {
-            $this->method($method)->enrol($user);
+            $state = $this->method($method)->enrol(
+                $user, $enrolment->state
+            );
 
-            $enrolment->fill(['enrolled_at' => now()])->save();
+            $enrolment->fill([
+                'enrolled_at' => now(),
+                'state' => array_merge_recursive(
+                    $enrolment->state, $state
+                )
+            ])->save();
 
             $this->event(new Events\Enrolled($enrolment));
             
@@ -135,7 +143,7 @@ class AuthenticationBroker implements BrokerContract
     public function disenrol(Challengeable $user, $method_name)
     {
         if ($enrolment = $user->enrolments()->enrolled($method_name)->first()) {
-            $this->method($method_name)->disenrol($user);
+            $this->method($method_name)->disenrol($user, $enrolment->state);
 
             $user->enrolments()->method($method_name)->delete();
 
@@ -147,7 +155,7 @@ class AuthenticationBroker implements BrokerContract
         return static::INVALID_ENROLMENT;
     }
 
-    public function challenge(Challengeable $user, $method_name, $purpose, array $meta = [])
+    public function challenge(Challengeable $user, $method_name, $purpose, array $data = [])
     {
         // Retrieve a method instance for the requested method name.
         if (!($method = $this->method($method_name))) {
@@ -160,8 +168,11 @@ class AuthenticationBroker implements BrokerContract
         // Next, we check that the user is either enrolled or that 
         // this challenge is part of the enrolment process.
         if (!$this->canChallenge($user, $method_name, $purpose)) {
+            dd('sds');
             return static::USER_NOT_ENROLLED;
         }
+
+        $state = $method->challenge($user, $data);
 
         // Create the challenge, call the method 
         // instance and fire the challenged event.
@@ -171,26 +182,32 @@ class AuthenticationBroker implements BrokerContract
             'method' => $method_name,
             'purpose' => $purpose,
             'challenged_at' => now(),
-            'meta' => $meta,
+            'state' => $state,
         ]);
-
-        $method->challenge($user, $code);
         
         $this->event(new Events\Challenged($challenge));
 
         return static::USER_CHALLENGED;
     }
 
-    public function verify(Challengeable $user, $method, $token)
+    public function verify(Challengeable $user, $method, array $data = [])
     {
         // Check that we have a valid challenge for the user and method.
         if (!($challenge = $user->challenges()->pending($method)->first())) {
             return static::INVALID_CHALLENGE;
         }
 
-        if ($challenge['token'] === $token) {
+        try {
+            $state = $this->method($method)->verify(
+                $user, $challenge->state, $data
+            );
 
-            $challenge->fill(['verified_at' => now()])->save();
+            $challenge->fill([
+                'verified_at' => now(),
+                'state' => array_merge_recursive(
+                    $challenge->state, $state
+                )
+            ])->save();
 
             $this->event(new Events\Verified($challenge));
 
@@ -199,7 +216,7 @@ class AuthenticationBroker implements BrokerContract
             }
 
             return static::CODE_VERIFIED;
-        }
+        } catch (Exceptions\TwoFactorVerificationException $ex) { /**/ }
 
         return static::INVALID_CODE;
     }

@@ -4,6 +4,7 @@ namespace BoxedCode\Laravel\TwoFactor\Methods;
 
 use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use BoxedCode\Laravel\TwoFactor\Contracts\Method as MethodContract;
+use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorVerificationException;
 use BoxedCode\Laravel\TwoFactor\Methods\Method;
 use BoxedCode\Laravel\TwoFactor\Notifications\DefaultAuthenticationRequest;
 
@@ -14,44 +15,46 @@ class NotificationMethod extends Method implements MethodContract
         return true;
     }
 
-    public function requiresEnrolmentSetup()
+    public function beforeSetup(Challengeable $user): array
     {
-        return true;
+        return [];
     }
 
-    public function beforeSetup(Challengeable $user, array $paramters = [])
+    public function setup(Challengeable $user, array $state = [], array $data = []): array
     {
-        return [$user->email];
+        return [];
     }
 
-    public function setup(Challengeable $user, $token = null, array $parameters = [])
+    public function enrol(Challengeable $user, array $state = []): array
     {
-        return [$user->name];
+        return [];
     }
 
-    public function enrol(Challengeable $user, $parameters = [])
+    public function disenrol(Challengeable $user, array $state = [])
     {
-        //
+        return [];
     }
 
-    public function disenrol(Challengeable $user)
-    {
-        //
-    }
-
-    public function challenge(Challengeable $user, $token)
+    public function challenge(Challengeable $user, array $data = []): array
     {
         $notification = $this->notification(
-            $token,
-            $this->config['channels'] ?? []
+            $token = $this->code()
         );
 
         $user->notify($notification);
+
+        return ['token' => $token];
     }
 
-    public function verify(Challengeable $user, $token)
+    public function verify(Challengeable $user, array $state = [], array $data = []): array
     {
-        
+        if (strval($state['token']) === strval($data['code'])) {
+            return [
+                'verify' => $data
+            ];
+        }
+
+        throw new TwoFactorVerificationException;
     }
 
     protected function notification($code)

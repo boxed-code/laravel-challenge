@@ -4,6 +4,7 @@ namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
 use BoxedCode\Laravel\TwoFactor\AuthenticationBroker;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
+use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorLogicException;
 use Illuminate\Http\Request;
 use LogicException;
 
@@ -45,7 +46,7 @@ trait EnrolsUsers
                 );
         }
 
-        throw new LogicException(
+        throw new TwoFactorLogicException(
             sprintf('Broker returned an invalid response. [%s]', $response)
         );
     }
@@ -76,7 +77,8 @@ trait EnrolsUsers
     {
         $response = $this->broker()->setup(
             $request->user(),
-            $method
+            $method,
+            $request->all()
         );
 
         switch ($response) {
@@ -92,14 +94,15 @@ trait EnrolsUsers
                 );
         }
 
-        throw new LogicException(
+        throw new TwoFactorLogicException(
             sprintf('Broker returned an invalid response. [%s]', $response)
         );
     }
 
-    public function showEnrolled()
+    public function showEnrolled(Request $request, $method)
     {
-        return view('two_factor::enrolled');
+        return view('two_factor::enrolled')
+            ->withMethod($method);
     }
 
     public function disenrol(Request $request, $method)
@@ -118,13 +121,14 @@ trait EnrolsUsers
                 return $this->sendInvalidEnrolmentResponse();
         }
 
-        throw new LogicException(
+        throw new TwoFactorLogicException(
             sprintf('Broker returned an invalid response. [%s]', $response)
         );
     }
 
-    public function showDisenrolled()
+    public function showDisenrolled(Request $request, $method)
     {
-        return view('two_factor::disenrolled');
+        return view('two_factor::disenrolled')
+            ->withMethod($method);
     }
 }

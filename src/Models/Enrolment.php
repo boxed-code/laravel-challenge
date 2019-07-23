@@ -5,7 +5,6 @@ namespace BoxedCode\Laravel\TwoFactor\Models;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use BoxedCode\Laravel\TwoFactor\Contracts\Enrolment as EnrolmentContract;
 use BoxedCode\Laravel\TwoFactor\Methods\MethodNameFormatter;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Enrolment extends \Illuminate\Database\Eloquent\Model implements EnrolmentContract
 {
@@ -26,46 +25,19 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
     protected $fillable = [
         'user_id',
         'method',
-        'token',
         'enrolled_at',
         'setup_at',
-        'meta',
+        'state',
     ];
 
-    protected $hidden = ['token'];
+    protected $hidden = ['state'];
 
     protected $dates = ['enrolled_at', 'setup_at'];
-
-    protected $casts = ['meta' => 'array'];
-
-    public function getTokenAttribute()
-    {
-        if (!empty($this->attributes['token'])) {
-            return decrypt($this->attributes['token']);
-        }
-    }
-
-    public function setTokenAttribute($value)
-    {
-        if (!empty($value)) {
-            $value = encrypt($value);
-        }
-
-        $this->attributes['token'] = $value;
-    }
 
     public function getLabelAttribute()
     {
         return MethodNameFormatter::toLabel(
             $this->method
-        );
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(
-            $this->getModelForGuard(),
-            'user_id'
         );
     }
 

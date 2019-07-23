@@ -15,13 +15,12 @@ class TwoFactorChallenges extends Migration
     {
         Schema::create('two_factor_challenges', function(Blueprint $table) {
             $table->string('id')->primary();
-            $table->string('token');
             $table->integer('user_id')->unsigned();
             $table->string('method');
             $table->string('purpose');
             $table->timestamp('challenged_at')->nullable();
             $table->timestamp('verified_at')->nullable();
-            $table->json('meta')->nullable();
+            $table->text('state')->nullable();
             $table->timestamps();
         });
     }

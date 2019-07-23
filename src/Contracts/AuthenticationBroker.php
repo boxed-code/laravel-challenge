@@ -23,11 +23,11 @@ interface AuthenticationBroker
 
      public function begin(Challengeable $user, $method_name, array $meta = []);
      public function beforeSetup(Challengeable $user, $method_name);
-     public function setup(Challengeable $user, $method_name, $token = null, array $meta = []);
+     public function setup(Challengeable $user, $method_name, array $data = []);
      public function enrol(Challengeable $user, $method);
-     public function disenrol(Challengeable $user, $method);
-     public function challenge(Challengeable $user, $method_name, $purpose, array $meta = []);
-     public function verify(Challengeable $user, $method, $token);
+     public function disenrol(Challengeable $user, $method_name);
+     public function challenge(Challengeable $user, $method_name, $purpose, array $data = []);
+     public function verify(Challengeable $user, $method, array $data = []);
      public function canChallenge(Challengeable $user, $method, $purpose);
      public function canEnrol(Challengeable $user, $method);
      public function getEnrolledAuthDriverList(Challengeable $user);

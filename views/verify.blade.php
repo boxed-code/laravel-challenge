@@ -9,8 +9,8 @@
             {{ $error }}
         @endforeach
     @endif
-    <form method="POST" action="{{ url($verificationPath) }}">
-        <input type="text" name="code" placeholder="Code">
+    <form autocomplete="off" method="POST" action="{{ url($verificationPath) }}">
+        <input autocomplete="false" type="text" name="code" placeholder="Code">
         <button type="submit">Verify</button>
         @csrf
     </form>

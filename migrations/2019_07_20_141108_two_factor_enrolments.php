@@ -17,8 +17,7 @@ class TwoFactorEnrolments extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->string('method');
-            $table->text('token')->nullable();
-            $table->json('meta')->nullable();
+            $table->text('state')->nullable();
             $table->timestamp('setup_at')->nullable();
             $table->timestamp('enrolled_at')->nullable();
             $table->timestamps();

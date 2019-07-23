@@ -4,7 +4,6 @@ namespace BoxedCode\Laravel\TwoFactor\Models;
 
 use BoxedCode\Laravel\TwoFactor\Contracts\Challenge as ChallengeContract;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Challenge extends Model implements ChallengeContract
 {
@@ -24,28 +23,17 @@ class Challenge extends Model implements ChallengeContract
      */
     protected $fillable = [
         'id',
-        'token',
         'user_id',
         'method',
         'purpose',
         'challenged_at',
         'verified_at',
-        'meta',
+        'state',
     ];
 
-    protected $hidden = ['token'];
+    protected $hidden = ['state'];
 
     protected $dates = ['challenged_at', 'verified_at'];
-
-    protected $casts = ['meta' => 'array'];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(
-            $this->getModelForGuard(),
-            'user_id'
-        );
-    }
 
     public function scopePending($query, $method = null)
     {
