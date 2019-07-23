@@ -95,4 +95,30 @@ trait EnrolsUsers
     {
         return view('two_factor::enrolled');
     }
+
+    public function disenrol(Request $request, $method)
+    {
+        $response = $this->broker()->disenrol(
+            $request->user(),
+            $method
+        );
+
+        switch ($response) {
+            case AuthenticationBroker::USER_DISENROLLED:
+                return redirect()->to(
+                    $this->disenrolledPath($method)
+                );
+            case AuthenticationBroker::INVALID_ENROLMENT:
+                return $this->sendInvalidEnrolmentResponse();
+        }
+
+        throw new LogicException(
+            sprintf('Broker returned an invalid response. [%s]', $response)
+        );
+    }
+
+    public function disenrolled()
+    {
+        return view('two_factor::disenrolled');
+    }
 }

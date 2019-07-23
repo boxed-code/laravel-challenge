@@ -19,6 +19,11 @@ trait RedirectPaths
         return "/tfa/$provider_name/enrolled";
     }
 
+    public function disenrolledPath($provider_name)
+    {
+        return "/tfa/$provider_name/disenrolled";
+    }
+
     public function challengePath()
     {
         return '/tfa/challenge';

@@ -1,6 +1,5 @@
 <?php
 
-// @todo Disenrolment
 // @todo enrol() call to method enrol()
 // @todo Setup data handling
 // @todo Encrypt enrolment tokens
@@ -130,9 +129,19 @@ class AuthenticationBroker implements BrokerContract
         return static::INVALID_ENROLMENT;
     }
 
-    public function disenrol(Challengeable $user, $method)
+    public function disenrol(Challengeable $user, $method_name)
     {
-        //
+        if ($enrolment = $user->enrolments()->enrolled($method_name)->first()) {
+            $this->method($method_name)->disenrol($user);
+
+            $user->enrolments()->method($method_name)->delete();
+
+            $this->event(new Events\Disenrolled($user, $method_name));
+
+            return static::USER_DISENROLLED;
+        }
+
+        return static::INVALID_ENROLMENT;
     }
 
     public function challenge(Challengeable $user, $method_name, $purpose, array $meta = [])
