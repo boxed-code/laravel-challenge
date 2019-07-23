@@ -61,7 +61,13 @@ trait EnrolsUsers
             return $this->sendInvalidEnrolmentResponse();
         } 
 
-        return view('two_factor::enrol')
+        $methodViewName = "two_factor::$method.enrol";
+
+        if (view()->exists($methodViewName)) {
+            $view = view($methodViewName);
+        }
+
+        return (isset($view) ? $view : view('two_factor::enrol'))
             ->withSetupPath($this->enrolmentSetupPath($method))
             ->withSetupData($response);
     }
