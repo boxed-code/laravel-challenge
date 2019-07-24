@@ -20,11 +20,6 @@ class NotificationMethod extends Method implements MethodContract
     {
         return true;
     }
-    
-    /*public function requiresEnrolmentSetup()
-    {
-        return true;
-    }*/
 
     /**
      * Perform any pre-setup processing and return any data required by 
@@ -92,7 +87,7 @@ class NotificationMethod extends Method implements MethodContract
     {
         $notification = $this->notification($token = $this->token());
 
-        //$user->notify($notification);
+        $user->notify($notification);
 
         return ['token' => $token];
     }
