@@ -176,10 +176,10 @@ interface AuthBroker
      * 
      * @param  Challengeable $user       
      * @param  string        $method_name
-     * @param  array         $meta       
+     * @param  array         $state       
      * @return \BoxedCode\Laravel\TwoFactor\BrokerResponse
      */
-    public function beginEnrolment(Challengeable $user, $method_name, array $meta = []);
+    public function beginEnrolment(Challengeable $user, $method_name, array $state = []);
 
     /**
      * Can the user create a challenge request for the 

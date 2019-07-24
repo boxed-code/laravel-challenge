@@ -1,5 +1,5 @@
 <?php
-use BoxedCode\Laravel\TwoFactor\StringTokenGenerator;
+use BoxedCode\Laravel\TwoFactor\Generators\StringTokenGenerator;
 
 return [
     /*
@@ -44,7 +44,7 @@ return [
          | As with challenges, all incomplete enrolments are only valid for specific 
          | length of time, by default this is also set to one hour.
          */
-        'enrolment' => env('TWO_FACTOR_ENROLMENT_LIFETIME', 30),
+        'enrolment' => env('TWO_FACTOR_ENROLMENT_LIFETIME', 60 * 60),
 
     ],
 
@@ -86,6 +86,12 @@ return [
             'channels' => ['\NotificationChannels\Twilio\TwilioChannel'],
             'notification' => \BoxedCode\Laravel\TwoFactor\Notifications\TwilioAuthenticationRequest::class,
         ],
+
+        'authenticator' => [
+            'method' => 'google_authenticator',
+            'window' => 0,
+            'key_size' => 32,
+        ]
     ]
     
 ];

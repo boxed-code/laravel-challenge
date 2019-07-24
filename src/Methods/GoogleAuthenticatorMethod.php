@@ -1,4 +1,7 @@
 <?php
+//@todo Customer QR code generator.
+//@todo Pass method name into method constructors
+//@todo Customer method labels
 
 namespace BoxedCode\Laravel\TwoFactor\Methods;
 
@@ -6,9 +9,9 @@ use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use BoxedCode\Laravel\TwoFactor\Contracts\Method as MethodContract;
 use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorVerificationException;
 use BoxedCode\Laravel\TwoFactor\Methods\Method;
-use BoxedCode\Laravel\TwoFactor\Notifications\DefaultAuthenticationRequest;
+use PragmaRX\Google2FA\Google2FA;
 
-class NotificationMethod extends Method implements MethodContract
+class GoogleAuthenticatorMethod extends Method implements MethodContract
 {
     /**
      * Gets whether the method should require a 
@@ -22,6 +25,17 @@ class NotificationMethod extends Method implements MethodContract
     }
 
     /**
+     * Gets whether the method needs to be 
+     * setup during enrolment.
+     * 
+     * @return bool
+     */
+    public function requiresEnrolmentSetup()
+    {
+        return true;
+    }
+
+    /**
      * Perform any pre-setup processing and return any data required by 
      * the user before setup.
      * 
@@ -30,7 +44,28 @@ class NotificationMethod extends Method implements MethodContract
      */
     public function beforeSetup(Challengeable $user): array
     {
-        return [$state = [], $data = []];
+        $google = new Google2FA();
+
+        $key = $google->generateSecretKey($this->config['key_size'] ?? 32);
+
+        $qrCodeUrl = $google->getQRCodeUrl(
+            config()->get('app.name'),
+            $user->email,
+            $key
+        );
+
+        $url = base64_encode(
+            file_get_contents(
+                "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . 
+                    urlencode($qrCodeUrl)
+            )
+        );
+
+        $state = ['secret' => $key];
+
+        $data = ['qr_png' => 'data:image/png;base64,' . $url];
+
+        return [$state, $data];
     }
 
     /**
@@ -85,11 +120,7 @@ class NotificationMethod extends Method implements MethodContract
      */
     public function challenge(Challengeable $user, array $data = []): array
     {
-        $notification = $this->notification($token = $this->token());
-
-        $user->notify($notification);
-
-        return ['token' => $token];
+        return [];
     }
 
     /**
@@ -106,33 +137,22 @@ class NotificationMethod extends Method implements MethodContract
      */
     public function verify(Challengeable $user, array $state = [], array $data = []): array
     {
-        if (strval($state['token']) === strval($data['code'])) {
+        $google = new Google2FA();
+
+        // 'authenticator' needs to be swapped for the actual method key, 
+        // we need to pass this in somewhere.
+        $enrolment = $user->enrolments()->method('authenticator')->get()->first();
+
+        $window = $this->config['window'] ?? 4;
+
+        $secret = $enrolment ? $enrolment->state['secret'] : '';
+
+        $code = $data['code'] ?? '';
+
+        if ($enrolment && $google->verifyKey($secret, $code, $window)) {
             return [];
         }
 
         throw new TwoFactorVerificationException;
-    }
-
-    /**
-     * Set the notification to the user.
-     * 
-     * @param  string $token
-     * @return \Illuminate\Notifications\Notification
-     */
-    protected function notification($token)
-    {
-        // Use the configured notification if 
-        // one is available.
-        if (isset($this->config['notification'])) {
-            return new $this->config['notification'](
-                $token,
-                $this->config['channels']
-            );
-        }
-
-        return new DefaultAuthenticationRequest(
-            $token,
-            $this->config['channels']
-        );
     }
 }

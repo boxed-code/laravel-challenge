@@ -1,5 +1,5 @@
 <?php
-
+//@todo Route::tfa() generates errors during package discovery
 namespace BoxedCode\Laravel\TwoFactor;
 
 use BoxedCode\Laravel\TwoFactor\BrokerResponse;
@@ -52,10 +52,10 @@ class AuthBroker implements BrokerContract
      * 
      * @param  Challengeable $user       
      * @param  string        $method_name
-     * @param  array         $meta       
+     * @param  array         $state       
      * @return \BoxedCode\Laravel\TwoFactor\BrokerResponse
      */
-    public function beginEnrolment(Challengeable $user, $method_name, array $meta = [])
+    public function beginEnrolment(Challengeable $user, $method_name, array $state = [])
     {
         // Retrieve a method instance for the requested method name.
         if (!($method = $this->method($method_name))) {
@@ -84,7 +84,7 @@ class AuthBroker implements BrokerContract
         $enrolment = $user->enrolments()->create([
             'user_id' => $user->getKey(),
             'method' => $method_name,
-            'meta' => $meta,
+            'state' => $state,
         ]);
 
         // If the requested method requires setup return 
@@ -126,7 +126,11 @@ class AuthBroker implements BrokerContract
         // can make any calls or generate necessary data before the setup.
         // This data is then returned to the caller for them to process 
         // before they call the setup method.
-        $data = $this->method($method_name)->beforeSetup($user);
+        [$state, $data] = $this->method($method_name)->beforeSetup($user);
+
+        $enrolment->fill([
+            'state' => $state
+        ])->save();
 
         return $this->respond(static::BEFORE_SETUP_COMPLETE, ['data' => $data]);
     }

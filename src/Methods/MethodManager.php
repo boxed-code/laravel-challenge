@@ -79,7 +79,7 @@ class MethodManager
         } elseif (isset($this->customCreators[$name])) {
             return $this->methods[$name] = $this->callCustomCreator($config);
         } else {
-            $methodMethod = 'create'.ucfirst($methodName).'Method';
+            $methodMethod = 'create'.Str::studly($methodName).'Method';
 
             if (method_exists($this, $methodMethod)) {
                 return $this->methods[$name] = $this->{$methodMethod}($config);
@@ -135,6 +135,11 @@ class MethodManager
     protected function createNotificationMethod($config)
     {
         return new NotificationMethod($config);
+    }
+
+    protected function createGoogleAuthenticatorMethod($config)
+    {
+        return new GoogleAuthenticatorMethod($config);
     }
 
     /**
