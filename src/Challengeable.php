@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait Challengeable
 {
+    /**
+     * Get the users default two factor method name.
+     * 
+     * @return string|bool
+     */
     public function getDefaultTwoFactorAuthMethod()
     {
-        $config = config('two_factor.enabled', []);
-        
-        $default = array_shift($config);
+        $manager = app('auth.tfa')->getMethodManager();
+
+        $default = $manager->getDefaultMethod();
 
         $enrolments = $this->enrolments()->enrolled()->get();
 
@@ -21,6 +26,11 @@ trait Challengeable
         return $enrolment ? $enrolment['method'] : false;
     }
 
+    /**
+     * The users challenge relationship.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function challenges(): HasMany
     {
         return $this->hasMany(
@@ -28,6 +38,11 @@ trait Challengeable
         );
     }
 
+    /**
+     * The users enrolments relationship.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function enrolments(): HasMany
     {
         return $this->hasMany(

@@ -22,6 +22,8 @@ class TwoFactorChallenges extends Migration
             $table->timestamp('verified_at')->nullable();
             $table->text('state')->nullable();
             $table->timestamps();
+
+            $table->unique(['user_id', 'method'], 'unique_challenge');
         });
     }
 

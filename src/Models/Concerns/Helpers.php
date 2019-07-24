@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait Helpers
 {
+    /**
+     * Decrypt and get the state attribute.
+     * 
+     * @return array
+     */
     public function getStateAttribute()
     {
         if (!empty($this->attributes['state'])) {
@@ -15,6 +20,11 @@ trait Helpers
         return [];
     }
 
+    /**
+     * Encrypt and set the state attribute.
+     * 
+     * @param array $value
+     */
     public function setStateAttribute($value)
     {
         if (!empty($value)) {
@@ -25,6 +35,11 @@ trait Helpers
         $this->attributes['state'] = null;
     }
 
+    /**
+     * Get the user the model belongs to.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(
@@ -33,6 +48,12 @@ trait Helpers
         );
     }
 
+    /**
+     * Get the model associate with an authentication guard.
+     * 
+     * @param  string|null $guard
+     * @return string
+     */
     protected function getModelForGuard($guard = null)
     {
         if (empty($guard)) {

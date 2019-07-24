@@ -11,8 +11,18 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $code;
+    /**
+     * The authentication token.
+     * 
+     * @var string
+     */
+    protected $token;
 
+    /**
+     * The channels to dispatch this notification via.
+     * 
+     * @var array
+     */
     protected $channels;
 
     /**
@@ -20,9 +30,9 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($code, array $channels)
+    public function __construct($token, array $channels)
     {
-        $this->code = $code;
+        $this->token = $token;
 
         $this->channels = $channels;
     }
@@ -45,7 +55,7 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
      */
     protected function getNotificationPlainText()
     {
-        return 'Your authentication code is: ' . $this->code . '.';
+        return 'Your authentication code is ' . $this->token;
     }
 
     /**

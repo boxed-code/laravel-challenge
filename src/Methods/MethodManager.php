@@ -68,6 +68,10 @@ class MethodManager
             throw new InvalidArgumentException("Method [{$name}] is not defined.");
         }
 
+        if (!$this->validateMethodName($name)) {
+            throw new InvalidArgumentException("Method [{$name}] is not enabled.");
+        }
+
         $methodName = $config['method'];
 
         if (isset($this->methods[$name])) {
@@ -87,34 +91,47 @@ class MethodManager
         }
     }
 
+    /**
+     * Get the array of enabled authentication methods.
+     * 
+     * @return array
+     */
     public function getEnabledMethods()
     {
         return $this->app['config']['two_factor.enabled'];
     }
 
-    public function formatMethodLabel($provider_name)
-    {
-        $search = ['-', '_'];
-
-        $titleCase = Str::title($provider_name);
-
-        return str_replace($search, ' ', $titleCase);
-    }
-
+    /**
+     * Get a formatted list of the enabled methods.
+     * 
+     * @return \Illuminate\Support\Collection
+     */
     public function enabledMethodList()
     {
-        $methodNames = $this->methods->getEnabledMethods();
+        $methodNames = $this->getEnabledMethods();
 
         return collect($methodNames)->mapWithKeys(function($value) {
-            return [$value => $this->formatMethodLabel($value)];
+            return [$value => MethodNameFormatter::toLabel($value)];
         });
     }
 
-    public function validateMethodName($provider_name)
+    /**
+     * Validate the supplied method name actually exists.
+     * 
+     * @param  string $method
+     * @return bool
+     */
+    public function validateMethodName($method)
     {
-        return $this->enabledMethodList()->exists($provider_name);
+        return $this->enabledMethodList()->has($method);
     }
 
+    /**
+     * Create a notification method instance.
+     * 
+     * @param  array $config
+     * @return \BoxedCode\Laravel\TwoFactor\Contracts\Method
+     */
     protected function createNotificationMethod($config)
     {
         return new NotificationMethod($config);
@@ -127,7 +144,9 @@ class MethodManager
      */
     public function getDefaultMethod()
     {
-        return array_shift($this->app['config']['two_factor.enabled']);
+        $enabled = $this->getEnabledMethods();
+
+        return array_shift($enabled);
     }
 
     /**

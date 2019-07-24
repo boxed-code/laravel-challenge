@@ -8,13 +8,6 @@ use Illuminate\Support\ServiceProvider;
 class TwoFactorServiceProvider extends ServiceProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
      * Register the service provider.
      *
      * @return void
@@ -26,6 +19,16 @@ class TwoFactorServiceProvider extends ServiceProvider
             'two_factor'
         );
 
+        $this->registerAuthenticationBroker();
+    }
+
+    /**
+     * Register the authentication broker instance.
+     * 
+     * @return void
+     */
+    protected function registerAuthenticationBroker()
+    {
         $this->app->bind(AuthenticationBroker::class, function($app) {
             $manager = new Methods\MethodManager($app);
 
@@ -45,34 +48,41 @@ class TwoFactorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadViewsFrom(
-            $this->packagePath('views'), 
-            'two_factor'
-        );
+        // Register the packages route macros.
+        $this->registerRouteMacro();
 
-        Router::macro('twoFactorAuth', function() {
-            $this->get('/tfa', 'Auth\TwoFactorAuthController@showMethodSelectionForm')->name('twofactor.challenge');
-            $this->get('/tfa/error', 'Auth\TwoFactorAuthController@showError');
-            $this->post('/tfa/challenge', 'Auth\TwoFactorAuthController@challenge')->name('twofactor.challenge.method');
-            $this->get('/tfa/{method}/verify', 'Auth\TwoFactorAuthController@showVerificationForm');
-            $this->post('/tfa/{method}/verify', 'Auth\TwoFactorAuthController@verify');
-            $this->get('/tfa/{method}/enrol', 'Auth\TwoFactorAuthController@begin')->name('twofactor.enrol');
-            $this->get('/tfa/{method}/enrol/setup', 'Auth\TwoFactorAuthController@showSetupForm');
-            $this->post('/tfa/{method}/enrol/setup', 'Auth\TwoFactorAuthController@setup');
-            $this->get('/tfa/{method}/enrolled', 'Auth\TwoFactorAuthController@showEnrolled');
-            $this->get('/tfa/{method}/disenrol', 'Auth\TwoFactorAuthController@disenrol')->name('twofactor.disenrol');
-            $this->get('/tfa/{method}/disenrolled', 'Auth\TwoFactorAuthController@showDisenrolled');
-        });
+        // Register the package views.
+        $this->loadViewsFrom($this->packagePath('views'), 'two_factor');
 
+        // Register the package configuration to publish.
         $this->publishes(
             [$this->packagePath('config/two_factor.php') => config_path('two_factor.php')], 
             'config'
         );
 
+        // Register the migrations to publish.
         $this->publishes(
             [$this->packagePath('migrations') => database_path('migrations')], 
             'migrations'
         );
+    }
+
+    /**
+     * Register the router macro.
+     * 
+     * @return void
+     */
+    protected function registerRouteMacro()
+    {
+        $registerRoutes = function() { 
+            $this->loadRoutesFrom(
+                $this->packagePath('src/Http/routes.php')
+            ); 
+        };
+
+        Router::macro('tfa', function() use ($registerRoutes) {
+            $registerRoutes();
+        });
     }
 
     /**
@@ -84,10 +94,5 @@ class TwoFactorServiceProvider extends ServiceProvider
     protected function packagePath($path = '')
     {
         return sprintf('%s/../%s', __DIR__, $path);
-    }
-
-    public function provides()
-    {
-        return ['auth.tfa'];
     }
 }

@@ -31,10 +31,27 @@ class Challenge extends Model implements ChallengeContract
         'state',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
     protected $hidden = ['state'];
 
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
     protected $dates = ['challenged_at', 'verified_at'];
 
+    /**
+     * Pending challenges scope.
+     * 
+     * @param  \Illuminate\Database\Query\EloquentBuilder $query
+     * @param  string $method
+     * @return void
+     */
     public function scopePending($query, $method = null)
     {
         $query->whereNull('verified_at');
@@ -44,11 +61,41 @@ class Challenge extends Model implements ChallengeContract
         }
     }
 
+    /**
+     * Challenge method scope.
+     * 
+     * @param  \Illuminate\Database\Query\EloquentBuilder $query
+     * @param  sting $method
+     * @return void
+     */
     public function scopeMethod($query, $method)
     {
         $query->where('method', '=', $method);
     }
 
+    /**
+     * Challenge method scope.
+     * 
+     * @param  \Illuminate\Database\Query\EloquentBuilder $query
+     * @param  sting $method
+     * @return void
+     */
+    public function scopeEnrolment($query, $method)
+    {
+        $query
+            ->where('method', '=', $method)
+            ->where('purpose', '=', static::PURPOSE_ENROLMENT);
+    }
+
+    /**
+     * Challenges ready for GC scope.
+     * 
+     * @param  \Illuminate\Database\Query\EloquentBuilder $query
+     * @param  integer $user_id
+     * @param  string  $method   
+     * @param  integer $lifetime
+     * @return void
+     */
     public function scopeReadyForGc($query, $user_id, $method, $lifetime)
     {
         $query->where('user_id', '=', $user_id)

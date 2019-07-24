@@ -30,10 +30,25 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
         'state',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
     protected $hidden = ['state'];
 
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
     protected $dates = ['enrolled_at', 'setup_at'];
 
+    /**
+     * Get the friendly name for an enrolment.
+     * 
+     * @return string
+     */
     public function getLabelAttribute()
     {
         return MethodNameFormatter::toLabel(
@@ -41,11 +56,25 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
         );
     }
 
+    /**
+     * Enrolment method scope.
+     * 
+     * @param  \Illuminate\Database\Query\EloquentBuilder $query
+     * @param  sting $method [description]
+     * @return void
+     */
     public function scopeMethod($query, $method)
     {
         $query->where('method', '=', $method);
     }
 
+    /**
+     * Enrolment enrolled status scope.
+     * 
+     * @param  \Illuminate\Database\Query\EloquentBuilder $query
+     * @param  sting $method
+     * @return void
+     */
     public function scopeEnrolled($query, $method = null)
     {
         $query->whereNotNull('enrolled_at');
@@ -55,6 +84,13 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
         }
     }
 
+    /**
+     * Enrolment enrolling status scope.
+     * 
+     * @param  \Illuminate\Database\Query\EloquentBuilder $query
+     * @param  sting $method
+     * @return void
+     */
     public function scopeEnrolling($query, $method = null)
     {
         $query->whereNull('enrolled_at');
@@ -64,6 +100,15 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
         }
     }
 
+    /**
+     * Enrolments ready for GC scope.
+     * 
+     * @param  \Illuminate\Database\Query\EloquentBuilder $query
+     * @param  integer $user_id
+     * @param  string  $method   
+     * @param  integer $lifetime
+     * @return void
+     */
     public function scopeReadyForGc($query, $user_id, $method, $lifetime)
     {
         $query->where('user_id', '=', $user_id)

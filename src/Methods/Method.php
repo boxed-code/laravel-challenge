@@ -6,13 +6,50 @@ use BoxedCode\Laravel\TwoFactor\Generators\NumericTokenGenerator;
 
 abstract class Method
 {
+    /**
+     * Configuration.
+     * 
+     * @var array
+     */
     protected $config;
 
+    /**
+     * Create a new method instance.
+     * 
+     * @param array $config
+     */
     public function __construct(array $config)
     {
         $this->config = $config;
     }
 
+    /**
+     * Gets whether the method should require a 
+     * successful challenge before enrolling the user.
+     * 
+     * @return bool
+     */
+    public function requiresEnrolmentChallenge()
+    {
+        return false;
+    }
+
+    /**
+     * Gets whether the method needs to be 
+     * setup during enrolment.
+     * 
+     * @return bool
+     */
+    public function requiresEnrolmentSetup()
+    {
+        return false;
+    }
+
+    /**
+     * Get a token generator instance for the method.
+     * 
+     * @return \BoxedCode\Laravel\TwoFactor\Contracts\TokenGenerator
+     */
     public function generator()
     {
         if (isset($this->config['token_generator'])) {
@@ -22,18 +59,13 @@ abstract class Method
         return new NumericTokenGenerator();
     }
 
-    public function code()
+    /**
+     * Generate a new token.
+     * 
+     * @return string
+     */
+    public function token()
     {
         return $this->generator()->generate();
-    }
-
-    public function requiresEnrolmentChallenge()
-    {
-        return false;
-    }
-
-    public function requiresEnrolmentSetup()
-    {
-        return false;
     }
 }

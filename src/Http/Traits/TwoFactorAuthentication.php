@@ -6,7 +6,6 @@ trait TwoFactorAuthentication
 {
     use EnrolsUsers, 
         ChallengesUsers, 
-        SendsAndShowsErrors, 
-        RedirectPaths,
-        BrokerAware;
+        RoutesBrokerResponses,
+        Helpers;
 }

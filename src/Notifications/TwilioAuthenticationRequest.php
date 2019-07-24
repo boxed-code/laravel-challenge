@@ -10,6 +10,12 @@ class TwilioAuthenticationRequest extends DefaultAuthenticationRequest implement
 {
     use Queueable;
 
+    /**
+     * Prepare the notifcation for Twilio.
+     * 
+     * @param  Challengeable $notifiable
+     * @return NotificationChannels\Twilio\TwilioSmsMessage
+     */
     public function toTwilio($notifiable)
     {
         return (new TwilioSmsMessage())
