@@ -13,7 +13,7 @@ trait Challengeable
      */
     public function getDefaultTwoFactorAuthMethod()
     {
-        $manager = app('auth.tfa')->getMethodManager();
+        $manager = app('auth.tfa.broker')->getMethodManager();
 
         $default = $manager->getDefaultMethod();
 

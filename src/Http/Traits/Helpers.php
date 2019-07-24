@@ -45,6 +45,6 @@ trait Helpers
      */
     protected function broker()
     {
-        return app('auth.tfa');
+        return app('auth.tfa.broker');
     }
 }

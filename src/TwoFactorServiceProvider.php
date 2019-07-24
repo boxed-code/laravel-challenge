@@ -2,6 +2,8 @@
 
 namespace BoxedCode\Laravel\TwoFactor;
 
+use BoxedCode\Laravel\TwoFactor\Contracts\AuthenticationBroker as AuthenticationBrokerContract;
+use BoxedCode\Laravel\TwoFactor\Contracts\SessionManager as SessionManagerContract;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +22,8 @@ class TwoFactorServiceProvider extends ServiceProvider
         );
 
         $this->registerAuthenticationBroker();
+
+        $this->registerSessionManager();
     }
 
     /**
@@ -29,7 +33,7 @@ class TwoFactorServiceProvider extends ServiceProvider
      */
     protected function registerAuthenticationBroker()
     {
-        $this->app->bind(AuthenticationBroker::class, function($app) {
+        $this->app->bind(AuthenticationBrokerContract::class, function($app) {
             $manager = new Methods\MethodManager($app);
 
             $config = config('two_factor', []);
@@ -38,7 +42,35 @@ class TwoFactorServiceProvider extends ServiceProvider
                 ->setEventDispatcher($app['events']);
         });
 
-        $this->app->alias(AuthenticationBroker::class, 'auth.tfa');
+        $this->app->alias(AuthenticationBrokerContract::class, 'auth.tfa.broker');
+    }
+
+    protected function registerSessionManager()
+    {
+        $this->app->singleton(SessionManagerContract::class, function($app) {
+            $config = config('two_factor', []);
+
+            return new SessionManager(
+                $app['session']->driver(), 
+                $config
+            );
+        });
+
+        $this->app->alias(SessionManagerContract::class, 'auth.tfa.session');
+
+        $this->app['events']->listen(
+            \Illuminate\Auth\Events\Logout::class, 
+            function ($e) {
+                $this->app[SessionManagerContract::class]->handleLogoutEvent($e);
+            }
+        );
+
+        $this->app['events']->listen(
+            Events\Verified::class,
+            function ($e) {
+                $this->app[SessionManagerContract::class]->handleVerifiedEvent($e);
+            }
+        );
     }
 
     /**
