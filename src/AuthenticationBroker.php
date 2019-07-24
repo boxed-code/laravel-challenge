@@ -1,5 +1,6 @@
 <?php
-
+// @todo flush stale tokens
+// 
 namespace BoxedCode\Laravel\TwoFactor;
 
 use BoxedCode\Laravel\TwoFactor\BrokerResponse;
@@ -32,7 +33,7 @@ class AuthenticationBroker implements BrokerContract
      * 
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
-    protected $dispatcher;
+    protected $events;
 
     /**
      * Create a new broker instance.
@@ -488,7 +489,7 @@ class AuthenticationBroker implements BrokerContract
      */
     public function getEventDispatcher()
     {
-        return $this->dispatcher;
+        return $this->events;
     }
 
     /**
@@ -498,9 +499,9 @@ class AuthenticationBroker implements BrokerContract
      */
     protected function event()
     {
-        if ($this->dispatcher) {
+        if ($this->events) {
             call_user_func_array(
-                [$this->dispatcher, 'dispatch'], 
+                [$this->events, 'dispatch'], 
                 func_get_args()
             );
         }
