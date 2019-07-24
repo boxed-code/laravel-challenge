@@ -4,7 +4,7 @@
 namespace BoxedCode\Laravel\TwoFactor;
 
 use BoxedCode\Laravel\TwoFactor\BrokerResponse;
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthenticationBroker as BrokerContract;
+use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker as BrokerContract;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use BoxedCode\Laravel\TwoFactor\Contracts\Enrolment;
@@ -12,7 +12,7 @@ use BoxedCode\Laravel\TwoFactor\Methods\MethodManager;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Illuminate\Support\Str;
 
-class AuthenticationBroker implements BrokerContract
+class AuthBroker implements BrokerContract
 {
     /**
      * The method manager instance.

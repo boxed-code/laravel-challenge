@@ -2,7 +2,7 @@
 
 namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
-use BoxedCode\Laravel\TwoFactor\AuthenticationBroker;
+use BoxedCode\Laravel\TwoFactor\AuthBroker;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 use Illuminate\Http\Request;
 
@@ -41,7 +41,7 @@ trait Helpers
     /**
      * Get the authentication broker instance.
      * 
-     * @return \BoxedCode\Laravel\TwoFactor\Contracts\AuthenticationBroker
+     * @return \BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker
      */
     protected function broker()
     {

@@ -2,7 +2,7 @@
 
 namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
-use BoxedCode\Laravel\TwoFactor\AuthenticationBroker;
+use BoxedCode\Laravel\TwoFactor\AuthBroker;
 use BoxedCode\Laravel\TwoFactor\BrokerResponse;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
@@ -65,7 +65,7 @@ trait EnrolsUsers
 
         // If the beforeSetup routine was not successful, we route the 
         // brokers response via the response handler, this determines the next action.
-        if (AuthenticationBroker::BEFORE_SETUP_COMPLETE !== (string) $response) {
+        if (AuthBroker::BEFORE_SETUP_COMPLETE !== (string) $response) {
             return $this->routeResponse($response);
         }
 

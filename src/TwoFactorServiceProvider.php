@@ -2,8 +2,8 @@
 
 namespace BoxedCode\Laravel\TwoFactor;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthenticationBroker as AuthenticationBrokerContract;
-use BoxedCode\Laravel\TwoFactor\Contracts\SessionManager as SessionManagerContract;
+use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker as BrokerContract;
+use BoxedCode\Laravel\TwoFactor\Contracts\SessionManager as ManagerContract;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,7 +21,7 @@ class TwoFactorServiceProvider extends ServiceProvider
             'two_factor'
         );
 
-        $this->registerAuthenticationBroker();
+        $this->registerAuthBroker();
 
         $this->registerSessionManager();
     }
@@ -31,23 +31,23 @@ class TwoFactorServiceProvider extends ServiceProvider
      * 
      * @return void
      */
-    protected function registerAuthenticationBroker()
+    protected function registerAuthBroker()
     {
-        $this->app->bind(AuthenticationBrokerContract::class, function($app) {
+        $this->app->bind(BrokerContract::class, function($app) {
             $manager = new Methods\MethodManager($app);
 
             $config = config('two_factor', []);
 
-            return (new AuthenticationBroker($manager, $config))
+            return (new AuthBroker($manager, $config))
                 ->setEventDispatcher($app['events']);
         });
 
-        $this->app->alias(AuthenticationBrokerContract::class, 'auth.tfa.broker');
+        $this->app->alias(BrokerContract::class, 'auth.tfa.broker');
     }
 
     protected function registerSessionManager()
     {
-        $this->app->singleton(SessionManagerContract::class, function($app) {
+        $this->app->singleton(ManagerContract::class, function($app) {
             $config = config('two_factor', []);
 
             return new SessionManager(
@@ -56,19 +56,19 @@ class TwoFactorServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->alias(SessionManagerContract::class, 'auth.tfa.session');
+        $this->app->alias(ManagerContract::class, 'auth.tfa.session');
 
         $this->app['events']->listen(
             \Illuminate\Auth\Events\Logout::class, 
             function ($e) {
-                $this->app[SessionManagerContract::class]->handleLogoutEvent($e);
+                $this->app[ManagerContract::class]->handleLogoutEvent($e);
             }
         );
 
         $this->app['events']->listen(
             Events\Verified::class,
             function ($e) {
-                $this->app[SessionManagerContract::class]->handleVerifiedEvent($e);
+                $this->app[ManagerContract::class]->handleVerifiedEvent($e);
             }
         );
     }

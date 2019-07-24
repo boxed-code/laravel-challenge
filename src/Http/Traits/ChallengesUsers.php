@@ -2,7 +2,7 @@
 
 namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthenticationBroker;
+use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorLogicException;
@@ -22,7 +22,7 @@ trait ChallengesUsers
 
         // Send an error if there are no enrolments for the current user.
         if (0 === $enrolmentCount) { 
-            return $this->routeResponse(AuthenticationBroker::ENROLMENT_NOT_FOUND); 
+            return $this->routeResponse(AuthBroker::ENROLMENT_NOT_FOUND); 
         }
 
         // If the user only has one enrolled authentication method, 
@@ -109,7 +109,7 @@ trait ChallengesUsers
                 ->withVerificationPath(route('tfa.verify.form', [$method]));
         }
 
-        return $this->routeResponse(AuthenticationBroker::USER_NOT_ENROLLED, $method);
+        return $this->routeResponse(AuthBroker::USER_NOT_ENROLLED, $method);
     }
 
     /**

@@ -5,7 +5,7 @@ namespace BoxedCode\Laravel\TwoFactor\Contracts;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 
-interface AuthenticationBroker
+interface AuthBroker
 {
     /**
      * Constant representing a requirement to perform 
