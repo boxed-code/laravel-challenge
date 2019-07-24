@@ -48,6 +48,10 @@ class RequireTwoFactorAuthentication
     public function handle($request, Closure $next, $methods = null)
     {
         if ($this->shouldAuthenticate($request, $methods)) {
+            if ($request->expectsJson()) {
+                throw new AuthenticationException;
+            }
+
             return redirect()->route('tfa');
         }
 

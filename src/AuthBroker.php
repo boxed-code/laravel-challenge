@@ -1,6 +1,5 @@
 <?php
-// @todo flush stale tokens
-// 
+
 namespace BoxedCode\Laravel\TwoFactor;
 
 use BoxedCode\Laravel\TwoFactor\BrokerResponse;
