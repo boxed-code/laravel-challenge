@@ -2,7 +2,7 @@
 
 namespace BoxedCode\Laravel\TwoFactor\Http\Middleware;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\SessionManager as AuthSessionManager;
+use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager;
 use Closure;
 
 class RequireTwoFactorAuthentication
@@ -10,16 +10,16 @@ class RequireTwoFactorAuthentication
     /**
      * The session manager instance.
      * 
-     * @var AuthSessionManager
+     * @var AuthManager
      */
     protected $manager;
 
     /**
      * Create a new middleware instance.
      * 
-     * @param AuthSessionManager $manager
+     * @param AuthManager $manager
      */
-    public function __construct(AuthSessionManager $manager)
+    public function __construct(AuthManager $manager)
     {
         $this->manager = $manager;
     }
@@ -32,6 +32,7 @@ class RequireTwoFactorAuthentication
      */
     protected $except = [
         '/tfa',
+        '/tfa/error',
         '/tfa/challenge',
         '/tfa/*/verify',
     ];

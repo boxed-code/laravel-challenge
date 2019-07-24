@@ -51,15 +51,4 @@ interface Challenge
      * @return void
      */
     public function scopeEnrolment($query, $method);
-
-    /**
-     * Challenges ready for GC scope.
-     * 
-     * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  integer $user_id
-     * @param  string  $method   
-     * @param  integer $lifetime
-     * @return void
-     */
-    public function scopeReadyForGc($query, $user_id, $method, $lifetime);
 }

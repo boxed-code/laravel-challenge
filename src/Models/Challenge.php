@@ -86,21 +86,4 @@ class Challenge extends Model implements ChallengeContract
             ->where('method', '=', $method)
             ->where('purpose', '=', static::PURPOSE_ENROLMENT);
     }
-
-    /**
-     * Challenges ready for GC scope.
-     * 
-     * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  integer $user_id
-     * @param  string  $method   
-     * @param  integer $lifetime
-     * @return void
-     */
-    public function scopeReadyForGc($query, $user_id, $method, $lifetime)
-    {
-        $query->where('user_id', '=', $user_id)
-            ->where('method', '=', $method)
-            ->whereIsNull('verified_at')
-            ->where('created_at', '<=', now()->subSeconds($lifetime));
-    }
 }

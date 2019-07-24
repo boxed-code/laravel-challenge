@@ -3,7 +3,7 @@
 namespace BoxedCode\Laravel\TwoFactor;
 
 use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker as BrokerContract;
-use BoxedCode\Laravel\TwoFactor\Contracts\SessionManager as ManagerContract;
+use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager as ManagerContract;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,7 +23,7 @@ class TwoFactorServiceProvider extends ServiceProvider
 
         $this->registerAuthBroker();
 
-        $this->registerSessionManager();
+        $this->registerAuthManager();
     }
 
     /**
@@ -45,12 +45,12 @@ class TwoFactorServiceProvider extends ServiceProvider
         $this->app->alias(BrokerContract::class, 'auth.tfa.broker');
     }
 
-    protected function registerSessionManager()
+    protected function registerAuthManager()
     {
         $this->app->singleton(ManagerContract::class, function($app) {
             $config = config('two_factor', []);
 
-            return new SessionManager(
+            return new AuthManager(
                 $app['session']->driver(), 
                 $config
             );

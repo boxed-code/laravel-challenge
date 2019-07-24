@@ -99,21 +99,4 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
             $query->whereMethod($method);
         }
     }
-
-    /**
-     * Enrolments ready for GC scope.
-     * 
-     * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  integer $user_id
-     * @param  string  $method   
-     * @param  integer $lifetime
-     * @return void
-     */
-    public function scopeReadyForGc($query, $user_id, $method, $lifetime)
-    {
-        $query->where('user_id', '=', $user_id)
-            ->where('method', '=', $method)
-            ->whereIsNull('enrolled_at')
-            ->where('created_at', '<=', now()->subSeconds($lifetime));
-    }
 }

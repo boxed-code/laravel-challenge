@@ -66,7 +66,7 @@ class AuthBroker implements BrokerContract
         // Check that we are not already enrolled.
         $existingEnrolment = $user->enrolments()->method($method_name)->first();
 
-        if ($this->isEnrolled($existingEnrolment)) {
+        if ($existingEnrolment && $this->isEnrolled($existingEnrolment)) {
             return $this->respond(static::USER_ALREADY_ENROLLED);
         }
 
@@ -142,6 +142,8 @@ class AuthBroker implements BrokerContract
      */
     public function setup(Challengeable $user, $method_name, array $data = [])
     {
+        $this->garbageCollection($user);
+        
         if (!($enrolment = $this->getEnrolment($user, $method_name))) {
             return $this->respond(static::ENROLMENT_NOT_FOUND);
         }
@@ -177,6 +179,8 @@ class AuthBroker implements BrokerContract
      */
     public function enrol(Challengeable $user, $method_name)
     {
+        $this->garbageCollection($user);
+
         if (!($enrolment = $user->enrolments()->enrolling($method_name)->first())) {
             return $this->respond(static::ENROLMENT_NOT_FOUND);
         }
@@ -252,6 +256,8 @@ class AuthBroker implements BrokerContract
      */
     public function challenge(Challengeable $user, $method_name, $purpose, array $data = [])
     {
+        $this->garbageCollection($user);
+        
         // Retrieve a method instance for the requested method name.
         if (!($method = $this->method($method_name))) {
             return $this->respond(static::METHOD_NOT_FOUND);
@@ -293,6 +299,8 @@ class AuthBroker implements BrokerContract
      */
     public function verify(Challengeable $user, $method, array $data = [])
     {
+        $this->garbageCollection($user);
+
         // Check that we have a valid challenge for the user and method.
         if (!($challenge = $user->challenges()->pending($method)->first())) {
             return $this->respond(static::CHALLENGE_NOT_FOUND);
@@ -458,6 +466,29 @@ class AuthBroker implements BrokerContract
     protected function respond(string $outcome, array $payload = [])
     {
         return new BrokerResponse($outcome, $payload);
+    }
+
+    protected function garbageCollection(Challengeable $user)
+    {
+        // Purge challenges.
+        $challengeExpiry = now()->subSeconds(
+            $this->config['lifetimes']['challenge']
+        );
+
+        $user->challenges()
+            ->whereNull('verified_at')
+            ->where('created_at', '<=', $challengeExpiry)
+            ->delete();
+
+        // Purge enrolments.
+        $enrolmentExpiry = now()->subSeconds(
+            $this->config['lifetimes']['enrolment']
+        );
+
+        $user->enrolments()
+            ->whereNull('enrolled_at')
+            ->where('created_at', '<=', $enrolmentExpiry)
+            ->delete();
     }
 
     /**

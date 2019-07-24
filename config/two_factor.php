@@ -35,17 +35,16 @@ return [
         'verification' => env('TWO_FACTOR_VERIFICATION_LIFETIME', 0),
 
         /*
-         | All 'unverified' challenges are automatically purged from the database after 
-         | a specified amount of time, by default this is set to one hour.
+         | All challenges issued are only valid for a specific length of time, you 
+         | can set this here,by default this is set to one hour.
          */
         'challenge' => env('TWO_FACTOR_CHALLENGE_LIFETIME', 60 * 60),
 
         /*
-         | As with challenges, all incomplete enrolments are automatically 
-         | purged from the database after a specified amount of time, by default 
-         | this is also set to one hour.
+         | As with challenges, all incomplete enrolments are only valid for specific 
+         | length of time, by default this is also set to one hour.
          */
-        'enrolment' => env('TWO_FACTOR_ENROLMENT_LIFETIME', 60 * 60),
+        'enrolment' => env('TWO_FACTOR_ENROLMENT_LIFETIME', 30),
 
     ],
 
