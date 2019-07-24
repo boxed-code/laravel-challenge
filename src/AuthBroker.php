@@ -414,8 +414,12 @@ class AuthBroker implements BrokerContract
      */
     public function getEnrolledAuthMethodList(Challengeable $user)
     {
+        $enabled = $this->getEnabledMethods();
+
         return $user->enrolments()->enrolled()->get()
-            ->keyBy('method')->map(function($enrolment) {
+            ->filter(function($enrolment) use ($enabled) {
+                return in_array($enrolment->method, $enabled);
+            })->keyBy('method')->map(function($enrolment) {
                 return $enrolment->label;
             });
     }
