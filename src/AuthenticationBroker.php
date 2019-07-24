@@ -62,7 +62,17 @@ class AuthenticationBroker implements BrokerContract
             return $this->respond(static::METHOD_NOT_FOUND);
         }
         
-        $user->enrolments()->method($method_name)->delete();
+        // Check that we are not already enrolled.
+        $existingEnrolment = $user->enrolments()->method($method_name)->first();
+
+        if ($this->isEnrolled($existingEnrolment)) {
+            return $this->respond(static::USER_ALREADY_ENROLLED);
+        }
+
+        // If were were part way though an enrolment, delete it.
+        if ($existingEnrolment) {
+            $user->enrolments()->method($method_name)->delete();
+        }
 
         // Verify that the use can enrol in two factor 
         // authentication for the requested provider.
@@ -107,6 +117,11 @@ class AuthenticationBroker implements BrokerContract
             return $this->respond(static::ENROLMENT_NOT_FOUND);
         }
 
+        // Check that we are not already enrolled.
+        if ($this->isEnrolled($enrolment)) {
+            return $this->respond(static::USER_ALREADY_ENROLLED);
+        }
+
         // We call the method instances preparation method so that it 
         // can make any calls or generate necessary data before the setup.
         // This data is then returned to the caller for them to process 
@@ -128,6 +143,11 @@ class AuthenticationBroker implements BrokerContract
     {
         if (!($enrolment = $this->getEnrolment($user, $method_name))) {
             return $this->respond(static::ENROLMENT_NOT_FOUND);
+        }
+
+        // Check that we are not already enrolled.
+        if ($this->isEnrolled($enrolment)) {
+            return $this->respond(static::USER_ALREADY_ENROLLED);
         }
 
         // The $data from the user is passed to the method instance here 
@@ -158,6 +178,11 @@ class AuthenticationBroker implements BrokerContract
     {
         if (!($enrolment = $user->enrolments()->enrolling($method_name)->first())) {
             return $this->respond(static::ENROLMENT_NOT_FOUND);
+        }
+
+        // Check that we are not already enrolled.
+        if ($this->isEnrolled($enrolment)) {
+            return $this->respond(static::USER_ALREADY_ENROLLED);
         }
 
         $method = $this->method($method_name);
@@ -395,6 +420,31 @@ class AuthenticationBroker implements BrokerContract
         return $user->enrolments()
             ->method($method_name)
             ->first();
+    }
+
+    /**
+     * Check that the user is not already enrolled in the authentication
+     * method passed.
+     * 
+     * @param  Challengeable $user       
+     * @param  string        $method_name
+     * @return boolean                   
+     */
+    
+    /**
+     * Check that the user is not already enrolled in the authentication
+     * method passed.
+     * 
+     * @param  Enrolment $enrolment
+     * @return boolean             
+     */
+    protected function isEnrolled(Enrolment $enrolment)
+    {
+        if ($enrolment && $enrolment->enrolled_at) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -67,6 +67,13 @@ interface AuthenticationBroker
     const USER_NOT_ENROLLED = 'user_not_enrolled';
 
     /**
+     * Constant representing the user already being enrolled.
+     *
+     * @var  string
+     */
+    const USER_ALREADY_ENROLLED = 'user_already_enrolled';
+
+    /**
      * Constant representing the user not being able to enrol.
      *
      * @var  string

@@ -121,6 +121,15 @@ trait RoutesBrokerResponses
                     )
                 );
 
+            // The user is already enrolled in the authentication method.
+            case AuthenticationBroker::USER_ALREADY_ENROLLED:
+                return  $this->sendErrorResponse(
+                    sprintf(
+                        'The user is already enrolled in %s two factor authentication.', 
+                        $method
+                    )
+                );
+
             // The user is not enrolled in the requested authentication method.
             case AuthenticationBroker::USER_NOT_ENROLLED:
                 return  $this->sendErrorResponse(
@@ -129,12 +138,6 @@ trait RoutesBrokerResponses
                         $method
                     )
                 );
-
-            // The user is not enrolled in any two factor authentication methods.
-            /*case AuthenticationBroker::USER_NO_ENROLMENTS:
-                return $this->sendErrorResponse(
-                    'This user is not enroled in any two factor authentication methods.'
-                );*/
 
             // The user cannot enrol into the requested authentication method.
             case AuthenticationBroker::USER_CANNOT_ENROL:
