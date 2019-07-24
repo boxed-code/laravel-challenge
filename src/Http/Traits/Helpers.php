@@ -16,9 +16,7 @@ trait Helpers
      */
     protected function reflashSessionPurpose(Request $request)
     {
-        $request->session()->flash(
-            '_tfa_purpose', Challenge::PURPOSE_ENROLMENT
-        );
+        $request->session()->reflash('_tfa_purpose');
     }
 
     /**

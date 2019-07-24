@@ -61,6 +61,8 @@ trait EnrolsUsers
             $method
         );
 
+        $this->reflashSessionPurpose($request);
+
         // If the beforeSetup routine was not successful, we route the 
         // brokers response via the response handler, this determines the next action.
         if (AuthenticationBroker::BEFORE_SETUP_COMPLETE !== (string) $response) {
