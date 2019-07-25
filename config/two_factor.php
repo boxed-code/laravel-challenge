@@ -76,18 +76,21 @@ return [
     'methods' => [
 
         'email' => [
+            'label' => 'E-mail',
             'method' => 'notification',
             'channels' => ['mail'],
             'token_generator' => StringTokenGenerator::class,
         ],
 
         'sms' => [
+            'label' => 'SMS',
             'method' => 'notification',
             'channels' => ['\NotificationChannels\Twilio\TwilioChannel'],
             'notification' => \BoxedCode\Laravel\TwoFactor\Notifications\TwilioAuthenticationRequest::class,
         ],
 
         'authenticator' => [
+            'label' => 'Google Authenticator',
             'method' => 'google_authenticator',
             'window' => 0,
             'key_size' => 32,

@@ -22,13 +22,14 @@ abstract class Method
 
     /**
      * Create a new method instance.
-     * 
+     *
+     * @param sting $name
      * @param array $config
      */
     public function __construct($name, array $config)
     {
         $this->name = $name;
-        
+
         $this->config = $config;
     }
 

@@ -111,7 +111,7 @@ class MethodManager
         $methodNames = $this->getEnabledMethods();
 
         return collect($methodNames)->mapWithKeys(function($value) {
-            return [$value => MethodNameFormatter::toLabel($value)];
+            return [$value => $this->getConfig($value)['label'] ?? ucwords($value)];
         });
     }
 

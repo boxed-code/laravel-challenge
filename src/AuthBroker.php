@@ -1,5 +1,9 @@
 <?php
-//@todo Route::tfa() generates errors during package discovery
+//@todo Finish google auth
+//@todo Whitelist/Blacklist provider
+//@todo Some type of auth stack 2fa, IP, Device, etc? Maybe be run through middlewareesque classesin order of precedence
+// Refuse based on blackist: IP from bad county but thn if none fail on White list IP addr -> Device -> 2FA 
+//@todo IP by county
 namespace BoxedCode\Laravel\TwoFactor;
 
 use BoxedCode\Laravel\TwoFactor\BrokerResponse;
@@ -414,13 +418,13 @@ class AuthBroker implements BrokerContract
      */
     public function getEnrolledAuthMethodList(Challengeable $user)
     {
-        $enabled = $this->getEnabledMethods();
+        $enabled = $this->enabledMethodList();
 
         return $user->enrolments()->enrolled()->get()
             ->filter(function($enrolment) use ($enabled) {
-                return in_array($enrolment->method, $enabled);
-            })->keyBy('method')->map(function($enrolment) {
-                return $enrolment->label;
+                return $enabled->has($enrolment->method);
+            })->keyBy('method')->map(function($enrolment) use ($enabled) {
+                return $enabled[$enrolment->method];
             });
     }
 
