@@ -1,9 +1,5 @@
 <?php
-//@todo Finish google auth
-//@todo Whitelist/Blacklist provider
-//@todo Some type of auth stack 2fa, IP, Device, etc? Maybe be run through middlewareesque classesin order of precedence
-// Refuse based on blackist: IP from bad county but thn if none fail on White list IP addr -> Device -> 2FA 
-//@todo IP by county
+
 namespace BoxedCode\Laravel\TwoFactor;
 
 use BoxedCode\Laravel\TwoFactor\BrokerResponse;
@@ -301,15 +297,16 @@ class AuthBroker implements BrokerContract
      * 
      * @param  Challengeable $user   
      * @param  string        $method 
+     * @param  string        $purpose
      * @param  array         $data   
      * @return \BoxedCode\Laravel\TwoFactor\BrokerResponse       
      */
-    public function verify(Challengeable $user, $method, array $data = [])
+    public function verify(Challengeable $user, $method, $purpose, array $data = [])
     {
         $this->garbageCollection($user);
 
         // Check that we have a valid challenge for the user and method.
-        if (!($challenge = $user->challenges()->pending($method)->first())) {
+        if (!($challenge = $user->challenges()->pending($method, $purpose)->first())) {
             return $this->respond(static::CHALLENGE_NOT_FOUND);
         }
 

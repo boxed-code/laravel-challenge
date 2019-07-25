@@ -18,6 +18,8 @@ trait ChallengesUsers
      */
     public function showMethodSelectionForm(Request $request)
     {
+        $this->setAuthenticationPurpose($request, Challenge::PURPOSE_AUTH);
+
         $enrolmentCount = $request->user()->enrolments()->enrolled()->count();
 
         // Send an error if there are no enrolments for the current user.
@@ -31,7 +33,7 @@ trait ChallengesUsers
             return $this->challengeAndRedirect(
                 $request->user(),
                 $request->user()->getDefaultTwoFactorAuthMethod(),
-                $request->session()->get('_tfa_purpose', Challenge::PURPOSE_AUTH),
+                $this->getAuthenticationPurpose($request),
                 $request->all()
             );
         }
@@ -54,10 +56,6 @@ trait ChallengesUsers
      */
     public function challenge(Request $request)
     {
-        $purpose = $request->session()->get(
-            '_tfa_purpose', Challenge::PURPOSE_AUTH
-        );
-
         $request->validate([
             'method' => 'required|string'
         ]);
@@ -65,7 +63,7 @@ trait ChallengesUsers
         return $this->challengeAndRedirect(
             $request->user(),
             $request->get('method'),
-            $purpose,
+            $this->getAuthenticationPurpose($request),
             $request->all()
         );
     }
@@ -94,14 +92,10 @@ trait ChallengesUsers
     {
         // First, we check that the requested authentication method
         // is valid and that the user is enrolled into it.
-        $purpose = $request->session()->get(
-            '_tfa_purpose', Challenge::PURPOSE_AUTH
-        );
-
-        $this->reflashSessionPurpose($request);
-
         $canChallenge = $this->broker()->canChallenge(
-            $request->user(), $method, $purpose
+            $request->user(), 
+            $method,
+            $this->getAuthenticationPurpose($request)
         );
         
         if ($canChallenge) { 
@@ -124,10 +118,9 @@ trait ChallengesUsers
         $response = $this->broker()->verify(
             $request->user(), 
             $method, 
+            $this->getAuthenticationPurpose($request),
             $request->all()
         );
-
-        $this->reflashSessionPurpose($request);
 
         return $this->routeResponse($response, $method);
     }

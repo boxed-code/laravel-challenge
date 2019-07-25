@@ -9,14 +9,40 @@ use Illuminate\Http\Request;
 trait Helpers
 {
     /**
-     * Refresh the challenge purpose within session storage.
+     * Get the current authentication purpose.
      * 
      * @param  Request $request
      * @return void
      */
-    protected function reflashSessionPurpose(Request $request)
+    protected function getAuthenticationPurpose(Request $request)
     {
-        $request->session()->reflash('_tfa_purpose');
+        return $request->session()->get(
+            '_tfa_purpose', Challenge::PURPOSE_AUTH
+        );
+    }
+
+    /**
+     * Set the current authentication purpose.
+     * 
+     * @param Request $request
+     * @param void
+     */
+    protected function setAuthenticationPurpose(Request $request, $purpose)
+    {
+        $request->session()->put(
+            '_tfa_purpose', $purpose
+        );
+    }
+
+    /**
+     * Flush the current authentication purpose.
+     * 
+     * @param  Request $request
+     * @return void
+     */
+    protected function flushAuthenticationPurpose(Request $request)
+    {
+        $request->session()->forget('_tfa_purpose');
     }
 
     /**

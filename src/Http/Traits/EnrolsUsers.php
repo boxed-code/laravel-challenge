@@ -27,8 +27,8 @@ trait EnrolsUsers
             $method
         );
 
-        $request->session()->flash(
-            '_tfa_purpose', Challenge::PURPOSE_ENROLMENT
+        $this->setAuthenticationPurpose(
+            $request, Challenge::PURPOSE_ENROLMENT
         );
 
         return $this->routeResponse($response, $method);
@@ -61,8 +61,6 @@ trait EnrolsUsers
             $method
         );
 
-        $this->reflashSessionPurpose($request);
-
         // If the beforeSetup routine was not successful, we route the 
         // brokers response via the response handler, this determines the next action.
         if (AuthBroker::BEFORE_SETUP_COMPLETE !== (string) $response) {
@@ -89,8 +87,6 @@ trait EnrolsUsers
             $request->all()
         );
 
-        $this->reflashSessionPurpose($request);
-
         return $this->routeResponse($response, $method);
     }
 
@@ -116,6 +112,8 @@ trait EnrolsUsers
      */
     public function showEnrolled(Request $request, $method)
     {
+        $this->flushAuthenticationPurpose($request);
+
         return $this->findView($method, 'enrolled')
             ->withMethod($method);
     }

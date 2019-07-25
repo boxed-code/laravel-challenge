@@ -2,6 +2,7 @@
 
 namespace BoxedCode\Laravel\TwoFactor\Methods;
 
+use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorVerificationException;
 use BoxedCode\Laravel\TwoFactor\Generators\NumericTokenGenerator;
 
@@ -54,30 +55,6 @@ abstract class Method
     public function requiresEnrolmentSetup()
     {
         return false;
-    }
-
-    /**
-     * Get a token generator instance for the method.
-     * 
-     * @return \BoxedCode\Laravel\TwoFactor\Contracts\TokenGenerator
-     */
-    public function generator()
-    {
-        if (isset($this->config['token_generator'])) {
-            return new $this->config['token_generator']();
-        }
-
-        return new NumericTokenGenerator();
-    }
-
-    /**
-     * Generate a new token.
-     * 
-     * @return string
-     */
-    public function token()
-    {
-        return $this->generator()->generate();
     }
 
     /**
@@ -162,5 +139,29 @@ abstract class Method
     public function verify(Challengeable $user, array $state = [], array $data = []): array
     {
         throw new TwoFactorVerificationException;
+    }
+
+    /**
+     * Get a token generator instance for the method.
+     * 
+     * @return \BoxedCode\Laravel\TwoFactor\Contracts\TokenGenerator
+     */
+    public function generator()
+    {
+        if (isset($this->config['token_generator'])) {
+            return new $this->config['token_generator']();
+        }
+
+        return new NumericTokenGenerator();
+    }
+
+    /**
+     * Generate a new token.
+     * 
+     * @return string
+     */
+    public function token()
+    {
+        return $this->generator()->generate();
     }
 }

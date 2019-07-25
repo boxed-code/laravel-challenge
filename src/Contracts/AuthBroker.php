@@ -166,10 +166,11 @@ interface AuthBroker
      * 
      * @param  Challengeable $user   
      * @param  string        $method 
+     * @param  string        $purpose
      * @param  array         $data   
      * @return \BoxedCode\Laravel\TwoFactor\BrokerResponse       
      */
-    public function verify(Challengeable $user, $method, array $data = []);
+    public function verify(Challengeable $user, $method, $purpose, array $data = []);
 
     /**
      * Begin enrolment in an authentication method.

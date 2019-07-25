@@ -50,14 +50,19 @@ class Challenge extends Model implements ChallengeContract
      * 
      * @param  \Illuminate\Database\Query\EloquentBuilder $query
      * @param  string $method
+     * @param  string $purpose
      * @return void
      */
-    public function scopePending($query, $method = null)
+    public function scopePending($query, $method = null, $purpose = null)
     {
         $query->whereNull('verified_at');
 
         if (!empty($method)) {
             $query->where('method', '=', $method);
+        }
+
+        if (!empty($purpose)) {
+            $query->where('purpose', '=', $purpose);
         }
     }
 
