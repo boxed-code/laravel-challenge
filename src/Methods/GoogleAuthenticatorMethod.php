@@ -141,7 +141,7 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
 
         // 'authenticator' needs to be swapped for the actual method key, 
         // we need to pass this in somewhere.
-        $enrolment = $user->enrolments()->method('authenticator')->get()->first();
+        $enrolment = $user->enrolments()->method($this->name)->get()->first();
 
         $window = $this->config['window'] ?? 4;
 

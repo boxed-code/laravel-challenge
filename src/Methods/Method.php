@@ -7,6 +7,13 @@ use BoxedCode\Laravel\TwoFactor\Generators\NumericTokenGenerator;
 abstract class Method
 {
     /**
+     * Configuration name.
+     * 
+     * @var string
+     */
+    protected $name;
+
+    /**
      * Configuration.
      * 
      * @var array
@@ -18,8 +25,10 @@ abstract class Method
      * 
      * @param array $config
      */
-    public function __construct(array $config)
+    public function __construct($name, array $config)
     {
+        $this->name = $name;
+        
         $this->config = $config;
     }
 

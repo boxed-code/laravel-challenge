@@ -77,12 +77,12 @@ class MethodManager
         if (isset($this->methods[$name])) {
             return $this->methods[$name];
         } elseif (isset($this->customCreators[$name])) {
-            return $this->methods[$name] = $this->callCustomCreator($config);
+            return $this->methods[$name] = $this->callCustomCreator($name, $config);
         } else {
             $methodMethod = 'create'.Str::studly($methodName).'Method';
 
             if (method_exists($this, $methodMethod)) {
-                return $this->methods[$name] = $this->{$methodMethod}($config);
+                return $this->methods[$name] = $this->{$methodMethod}($name, $config);
             } else {
                 throw new InvalidArgumentException(
                     "Method [{$name}] is not supported."
@@ -132,14 +132,14 @@ class MethodManager
      * @param  array $config
      * @return \BoxedCode\Laravel\TwoFactor\Contracts\Method
      */
-    protected function createNotificationMethod($config)
+    protected function createNotificationMethod($name, $config)
     {
-        return new NotificationMethod($config);
+        return new NotificationMethod($name, $config);
     }
 
-    protected function createGoogleAuthenticatorMethod($config)
+    protected function createGoogleAuthenticatorMethod($name, $config)
     {
-        return new GoogleAuthenticatorMethod($config);
+        return new GoogleAuthenticatorMethod($name, $config);
     }
 
     /**
