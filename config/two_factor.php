@@ -92,8 +92,9 @@ return [
         'authenticator' => [
             'label' => 'Google Authenticator',
             'method' => 'google_authenticator',
-            'window' => 0,
+            'window' => 1,
             'key_size' => 32,
+            //'qr_generator' => 'bacon-v1',
         ]
     ]
     

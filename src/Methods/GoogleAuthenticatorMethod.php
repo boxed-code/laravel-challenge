@@ -1,7 +1,4 @@
 <?php
-//@todo Customer QR code generator.
-//@todo Pass method name into method constructors
-//@todo Customer method labels
 
 namespace BoxedCode\Laravel\TwoFactor\Methods;
 
@@ -10,6 +7,7 @@ use BoxedCode\Laravel\TwoFactor\Contracts\Method as MethodContract;
 use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorVerificationException;
 use BoxedCode\Laravel\TwoFactor\Methods\Method;
 use PragmaRX\Google2FA\Google2FA;
+use InvalidArgumentException;
 
 class GoogleAuthenticatorMethod extends Method implements MethodContract
 {
@@ -54,16 +52,9 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
             $key
         );
 
-        $url = base64_encode(
-            file_get_contents(
-                "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . 
-                    urlencode($qrCodeUrl)
-            )
-        );
-
         $state = ['secret' => $key];
 
-        $data = ['qr_png' => 'data:image/png;base64,' . $url];
+        $data = ['qr_png' =>  $this->generateQrCode($qrCodeUrl)];
 
         return [$state, $data];
     }
@@ -152,5 +143,42 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
         }
 
         throw new TwoFactorVerificationException;
+    }
+
+    protected function generateQrCode($uri)
+    {
+        $generator = $this->config['qr_generator'] ?? 'qrserver';
+
+        switch ($generator) 
+        {
+            case 'bacon-v1':
+            case 'simple-qr':
+                return 'data:image/png;base64,' . base64_encode((new \BaconQrCode\Writer(
+                    (new \BaconQrCode\Renderer\Image\Png())
+                        ->setWidth(256)
+                        ->setHeight(256)
+                ))->writeString($uri));
+
+            case 'bacon-v2':
+                return 'data:image/png;base64,' . base64_encode((new \BaconQrCode\Writer(
+                    new \BaconQrCode\Renderer\ImageRenderer(
+                        new \BaconQrCode\Renderer\RendererStyle\RendererStyle(400),
+                        new BaconQrCode\Renderer\Image\ImagickImageBackEnd()
+                    )
+                ))->writeString($uri));
+
+            case 'qrserver':
+                return 'data:image/png;base64,' . base64_encode(
+                    file_get_contents(
+                        "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . 
+                            urlencode($uri)
+                    )
+                );
+                
+        }
+        
+        throw new InvalidArgumentException(
+            sprintf('Invalid QR code generator name supplied. [%s]', $generator)
+        );
     }
 }
