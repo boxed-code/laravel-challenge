@@ -53,7 +53,9 @@ class NotificationMethod extends Method implements MethodContract
      */
     public function verify(Challengeable $user, array $state = [], array $data = []): array
     {
-        if (strval($state['token']) === strval($data['code'])) {
+        $token = trim(strval($state['token']));
+
+        if (!empty($token) && $token === strval($data['code'])) {
             return [];
         }
 
