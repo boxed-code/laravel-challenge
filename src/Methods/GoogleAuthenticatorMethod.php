@@ -124,7 +124,8 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
      * @param  Challengeable $user  
      * @param  array         $state 
      * @param  array         $data  
-     * @return aray               
+     * @return array               
+     * @throws TwoFactorVerificationException
      */
     public function verify(Challengeable $user, array $state = [], array $data = []): array
     {
@@ -145,6 +146,13 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
         throw new TwoFactorVerificationException;
     }
 
+    /**
+     * Generate an inline QR code image.
+     * 
+     * @param  sting $uri
+     * @return string
+     * @throws  InvalidArgumentException
+     */
     protected function generateQrCode($uri)
     {
         $generator = $this->config['qr_generator'] ?? 'qrserver';

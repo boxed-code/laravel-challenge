@@ -84,7 +84,8 @@ interface Method
      * @param  Challengeable $user  
      * @param  array         $state 
      * @param  array         $data  
-     * @return aray               
+     * @return array               
+     * @throws TwoFactorVerificationException
      */
     public function verify(Challengeable $user, array $state = [], array $data = []): array;
 }
