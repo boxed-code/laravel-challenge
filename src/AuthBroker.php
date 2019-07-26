@@ -10,6 +10,7 @@ use BoxedCode\Laravel\TwoFactor\Contracts\Enrolment;
 use BoxedCode\Laravel\TwoFactor\Methods\MethodManager;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class AuthBroker implements BrokerContract
 {
@@ -58,7 +59,9 @@ class AuthBroker implements BrokerContract
     public function beginEnrolment(Challengeable $user, $method_name, array $state = [])
     {
         // Retrieve a method instance for the requested method name.
-        if (!($method = $this->method($method_name))) {
+        try {
+            $method = $this->method($method_name);
+        } catch (InvalidArgumentException $ex) {
             return $this->respond(static::METHOD_NOT_FOUND);
         }
         
@@ -262,7 +265,9 @@ class AuthBroker implements BrokerContract
         $this->garbageCollection($user);
         
         // Retrieve a method instance for the requested method name.
-        if (!($method = $this->method($method_name))) {
+        try {
+            $method = $this->method($method_name);
+        } catch (InvalidArgumentException $ex) {
             return $this->respond(static::METHOD_NOT_FOUND);
         }
 
