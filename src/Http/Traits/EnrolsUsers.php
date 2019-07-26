@@ -67,9 +67,10 @@ trait EnrolsUsers
             return $this->routeResponse($response);
         }
 
-        return $this->findView($method, 'enrol')
-            ->with('form_action_url', route('tfa.enrolment.setup', [$method]))
-            ->with('setup_data', $response->data);
+        return $this->view('enrol', $method, [
+            'setup_data' => $response->data,
+            'form_action_url' => route('tfa.enrolment.setup', [$method])
+        ]);
     }
 
     /**
@@ -114,8 +115,9 @@ trait EnrolsUsers
     {
         $this->flushAuthenticationPurpose($request);
 
-        return $this->findView($method, 'enrolled')
-            ->withMethod($method);
+        return $this->view('enrolled', $method, [
+            'method' => $method
+        ]);
     }
 
     /**
@@ -158,7 +160,8 @@ trait EnrolsUsers
      */
     public function showDisenrolled(Request $request, $method)
     {
-        return view('two_factor::disenrolled')
-            ->withMethod($method);
+        return $this->view('disenrolled', $method, [
+            'method' => $method
+        ]);
     }
 }

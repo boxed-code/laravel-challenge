@@ -43,9 +43,10 @@ trait ChallengesUsers
         );
 
         // Otherwise, we show them the method selection screen.
-        return view('two_factor::method')
-            ->with('methods', $methods)
-            ->with('form_action_url', route('tfa.challenge'));
+        return $this->view('method', null, [
+            'methods' => $methods, 
+            'form_action_url' => route('tfa.challenge')
+        ]);
     }
 
     /**
@@ -99,8 +100,9 @@ trait ChallengesUsers
         );
         
         if ($canChallenge) { 
-            return $this->findView($method, 'verify')
-                ->with('form_action_url', route('tfa.verify.form', [$method]));
+            return $this->view('verify', $method, [
+                'form_action_url' => route('tfa.verify.form', [$method])
+            ]);
         }
 
         return $this->routeResponse(AuthBroker::USER_NOT_ENROLLED, $method);

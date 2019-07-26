@@ -49,19 +49,24 @@ trait Helpers
      * Find a custom view for the requested method 
      * and view name or return the default.
      * 
-     * @param  string $method
      * @param  string $name 
+     * @param  string|null $method
+     * @param  array $data
      * @return \Illuminate\Contracts\View\View
      */
-    protected function findView($method, $name)
+    protected function view($name, $method = null, array $data = [])
     {
         $methodViewName = "two_factor::$method.$name";
 
-        if (view()->exists($methodViewName)) {
-            $view = view($methodViewName);
+        if (!empty($method) && view()->exists($methodViewName)) {
+            $view = $methodViewName;
         }
 
-        return (isset($view) ? $view : view("two_factor::$name"));
+        $view = (isset($view) ? $view : "two_factor::$name");
+
+        return response()
+            ->view($view, $data)
+            ->header('Cache-Control', 'no-store');
     }
 
     /**

@@ -25,7 +25,7 @@ trait RoutesBrokerResponses
      */
     public function showError()
     {
-        return view('two_factor::error');
+        return $this->view('error');
     }
     
     /**

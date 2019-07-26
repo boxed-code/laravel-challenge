@@ -16,4 +16,4 @@
     </form>
 </body>
 </html>
-{{ dd($setupData) }}
+{{ dd($setup_data) }}
