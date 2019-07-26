@@ -68,8 +68,8 @@ trait EnrolsUsers
         }
 
         return $this->findView($method, 'enrol')
-            ->withSetupPath(route('tfa.enrolment.setup', [$method]))
-            ->withSetupData($response->data);
+            ->with('form_action_url', route('tfa.enrolment.setup', [$method]))
+            ->with('setup_data', $response->data);
     }
 
     /**

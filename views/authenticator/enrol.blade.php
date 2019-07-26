@@ -5,7 +5,7 @@
     @include('two_factor::_styles')
 </head>
 <body>
-    <form method="POST" action="{{ url($setupPath) }}">
+    <form method="POST" action="{{ $form_action_url }}">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-5 ml-auto mr-auto">

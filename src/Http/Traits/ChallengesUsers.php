@@ -45,7 +45,7 @@ trait ChallengesUsers
         // Otherwise, we show them the method selection screen.
         return view('two_factor::method')
             ->with('methods', $methods)
-            ->with('challenge_path', route('tfa.challenge'));
+            ->with('form_action_url', route('tfa.challenge'));
     }
 
     /**
@@ -100,7 +100,7 @@ trait ChallengesUsers
         
         if ($canChallenge) { 
             return $this->findView($method, 'verify')
-                ->withVerificationPath(route('tfa.verify.form', [$method]));
+                ->with('form_action_url', route('tfa.verify.form', [$method]));
         }
 
         return $this->routeResponse(AuthBroker::USER_NOT_ENROLLED, $method);

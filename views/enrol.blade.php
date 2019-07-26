@@ -9,7 +9,7 @@
             {{ $error }}
         @endforeach
     @endif
-    <form method="POST" action="{{ url($setupPath) }}">
+    <form method="POST" action="{{ $form_action_url }}">
         This view should be overridden by the notification provider.
         <button type="submit">Continue</button>
         @csrf

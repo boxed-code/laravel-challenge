@@ -5,7 +5,7 @@
     @include('two_factor::_styles')
 </head>
 <body>
-    <form method="POST" action="{{ url($challenge_path) }}">
+    <form method="POST" action="{{ $form_action_url }}">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-6 ml-auto mr-auto">
