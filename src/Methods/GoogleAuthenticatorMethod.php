@@ -54,7 +54,7 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
 
         $state = ['secret' => $key];
 
-        $data = ['qr_png' =>  $this->generateQrCode($qrCodeUrl)];
+        $data = ['secret' => $key, 'qr_png' =>  $this->generateQrCode($qrCodeUrl)];
 
         return [$state, $data];
     }

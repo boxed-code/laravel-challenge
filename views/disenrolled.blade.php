@@ -1,9 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>TFA Disenrolled</title>
+    <title>Disenrolled | 2FA Verification</title>
+    @include('two_factor::_styles')
 </head>
 <body>
-    You have been disenrolled from {{ $method }} authentication.
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-6 ml-auto mr-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Success! You have been disenrolled</h5>
+
+                        <p class="card-text">To use {{ $method }} authentication again you will need to re-enrol.</p>
+
+                        <a href="{{ url('/') }}" class="btn btn-primary">Continue</a> or
+                        <a href="{{ route('tfa.enrol', $method) }}">re-enrol now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
