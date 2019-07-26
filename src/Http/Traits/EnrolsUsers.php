@@ -67,7 +67,7 @@ trait EnrolsUsers
             return $this->routeResponse($response);
         }
 
-        return $this->view('enrol', $method, [
+        return $this->view('setup', $method, [
             'setup_data' => $response->data,
             'form_action_url' => route('tfa.enrolment.setup', [$method])
         ]);
