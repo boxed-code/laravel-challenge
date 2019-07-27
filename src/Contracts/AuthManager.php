@@ -60,6 +60,14 @@ interface AuthManager
     public function isAuthenticated(Challengeable $user, string $method = null);
 
     /**
+     * Flush all challenges for the current user.
+     * 
+     * @param  Challengeable $user
+     * @return void    
+     */
+    public function flushChallenges(Challengeable $user);
+
+    /**
      * Get the session store instance.
      * 
      * @return \Illuminate\Contracts\Session\Session

@@ -69,6 +69,12 @@ class TwoFactorServiceProvider extends ServiceProvider
         // Register the packages route macros.
         $this->registerRouteMacro();
 
+        // Register the event listeners.
+        $this->app['events']->listen(
+            \Illuminate\Auth\Events\Logout::class, 
+            \BoxedCode\Laravel\TwoFactor\Listeners\LogoutListener::class
+        );
+
         // Register the package views.
         $this->loadViewsFrom($this->packagePath('views'), 'two_factor');
 

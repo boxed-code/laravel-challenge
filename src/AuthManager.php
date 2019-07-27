@@ -124,6 +124,17 @@ class AuthManager implements ManagerContract
     }
 
     /**
+     * Flush all challenges for the current user.
+     * 
+     * @param  Challengeable $user
+     * @return void    
+     */
+    public function flushChallenges(Challengeable $user)
+    {
+        $user->challenges()->delete();
+    }
+
+    /**
      * Get the length of time before another challenge/verification 
      * sequence is required.
      * 
