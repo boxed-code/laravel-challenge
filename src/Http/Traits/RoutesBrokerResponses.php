@@ -2,7 +2,6 @@
 
 namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
-use BoxedCode\Laravel\TwoFactor\BrokerResponse;
 use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker;
 use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager;
 use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorLogicException;

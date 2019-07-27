@@ -3,7 +3,7 @@
 namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
 use BoxedCode\Laravel\TwoFactor\AuthBroker;
-use BoxedCode\Laravel\TwoFactor\BrokerResponse;
+use BoxedCode\Laravel\TwoFactor\AuthBrokerResponse;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use BoxedCode\Laravel\TwoFactor\Contracts\Enrolment;

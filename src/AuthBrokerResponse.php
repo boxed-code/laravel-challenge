@@ -2,7 +2,7 @@
 
 namespace BoxedCode\Laravel\TwoFactor;
 
-class BrokerResponse
+class AuthBrokerResponse
 {
     /**
      * The outcome of the response.
