@@ -57,20 +57,6 @@ class TwoFactorServiceProvider extends ServiceProvider
         });
 
         $this->app->alias(ManagerContract::class, 'auth.tfa');
-
-        $this->app['events']->listen(
-            \Illuminate\Auth\Events\Logout::class, 
-            function ($e) {
-                $this->app[ManagerContract::class]->handleLogoutEvent($e);
-            }
-        );
-
-        $this->app['events']->listen(
-            Events\Verified::class,
-            function ($e) {
-                $this->app[ManagerContract::class]->handleVerifiedEvent($e);
-            }
-        );
     }
 
     /**

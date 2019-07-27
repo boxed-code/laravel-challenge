@@ -2,8 +2,9 @@
 
 namespace BoxedCode\Laravel\TwoFactor;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager as ManagerContract;
+use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
+use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use BoxedCode\Laravel\TwoFactor\Events\Verified;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Contracts\Session\Session;
@@ -101,90 +102,17 @@ class AuthManager implements ManagerContract
     }
 
     /**
-     * Get the session lifetime.
-     * 
-     * @return integer
-     */
-    public function getVerificationLifetime()
-    {
-        return $this->config['lifetimes']['verification'] ?? 0;
-    }
-
-    /**
-     * Set the challenges within the store.
-     * 
-     * @param \Illuminate\Support\Collection|array $challenges
-     */
-    public function setChallenges($challenges)
-    {
-        $this->session->put('_tfa_session_challenges', $challenges);
-    }
-
-    /**
-     * Get the challenges from the store.
-     * 
-     * @return \Illuminate\Support\Collection
-     */
-    public function getChallenges()
-    {
-        return collect($this->session->get('_tfa_session_challenges', []));
-    }
-
-    /**
-     * Flush all challenges in the store.
-     * 
-     * @return void
-     */
-    public function flushChallenges()
-    {
-        $this->setChallenges([]);
-    }
-
-    /**
-     * Log a challenge.
-     * 
-     * @param  Challenge $challenge
-     * @return
-     */
-    public function logChallenge(Challenge $challenge)
-    {
-        if (Challenge::PURPOSE_AUTH === $challenge->purpose) {
-            $this->setChallenges(
-                $this->getChallenges()->push($challenge)
-            );
-        }
-    }
-
-    /**
-     * Get th valid challenges from the store.
-     * 
-     * @return \Illuminate\Support\Collection
-     */
-    public function getValidChallenges()
-    {
-        return $this->getChallenges()->filter(function($item) {
-            $lifetime = $this->getVerificationLifetime();
-
-            if ($lifetime > 0) {
-                return $item->verified_at->greaterThan(
-                    now()->subSeconds($lifetime)
-                );
-            }
-            return true;
-        });
-    }
-
-    /**
      * Determine whether the user has authenticates themselves.
-     * 
+     *
+     * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user
      * @param  array|string  $method
      * @return boolean        
      */
-    public function isAuthenticated(string $method = null)
+    public function isAuthenticated(Challengeable $user, string $method = null)
     {
         $methods = (array) $method;
 
-        $challenges = $this->getValidChallenges();
+        $challenges = $this->getValidChallengesFor($user);
 
         if ($method) {
             $challenges = $challenges->whereIn(
@@ -196,25 +124,34 @@ class AuthManager implements ManagerContract
     }
 
     /**
-     * Handle the 'Verified' authentication event.
+     * Get the length of time before another challenge/verification 
+     * sequence is required.
      * 
-     * @param  \BoxedCode\Laravel\TwoFactor\Events\Verified $event
-     * @return void
+     * @return integer
      */
-    public function handleVerifiedEvent(Verified $event)
+    protected function getVerificationLifetime()
     {
-        $this->logChallenge($event->challenge);
+        return $this->config['lifetimes']['verification'] ?? 0;
     }
 
     /**
-     * Handle the 'Logout' authentication event.
-     * 
-     * @param  \Illuminate\Auth\Events\Logout $event 
-     * @return void
+     * Get the valid challenges from the store.
+     *
+     * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user
+     * @return \Illuminate\Support\Collection
      */
-    public function handleLogoutEvent(Logout $event)
+   protected function getValidChallengesFor(Challengeable $user)
     {
-        $this->flushChallenges();
+        return $user->challenges->filter(function($item) {
+            $lifetime = $this->getVerificationLifetime();
+
+            if ($lifetime > 0) {
+                return $item->verified_at && $item->verified_at->greaterThan(
+                    now()->subSeconds($lifetime)
+                );
+            }
+            return true;
+        });
     }
 
     /**
