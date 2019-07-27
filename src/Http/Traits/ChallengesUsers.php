@@ -3,6 +3,7 @@
 namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
 use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker;
+use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
 use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorLogicException;
@@ -18,7 +19,10 @@ trait ChallengesUsers
      */
     public function showMethodSelectionForm(Request $request)
     {
-        $this->setAuthenticationPurpose($request, Challenge::PURPOSE_AUTH);
+        // Authentications must be requested via the manager.
+        if (!$this->manager()->wantsAuthentication()) {
+            return $this->routeResponse(AuthManager::NO_AUTH_REQUEST);
+        }
 
         $enrolmentCount = $request->user()->enrolments()->enrolled()->count();
 
@@ -33,7 +37,6 @@ trait ChallengesUsers
             return $this->challengeAndRedirect(
                 $request->user(),
                 $request->user()->getDefaultTwoFactorAuthMethod(),
-                $this->getAuthenticationPurpose($request),
                 $request->all()
             );
         }
@@ -64,7 +67,6 @@ trait ChallengesUsers
         return $this->challengeAndRedirect(
             $request->user(),
             $request->get('method'),
-            $this->getAuthenticationPurpose($request),
             $request->all()
         );
     }
@@ -91,12 +93,19 @@ trait ChallengesUsers
      */
     public function showVerificationForm(Request $request, $method)
     {
+        // Authentications must be requested via the manager.
+        if (!$this->manager()->wantsAuthentication()) {
+            return $this->routeResponse(AuthManager::NO_AUTH_REQUEST);
+        }
+
         // First, we check that the requested authentication method
         // is valid and that the user is enrolled into it.
+        $purpose = $this->manager()->wantsAuthenticationFor();
+
         $canChallenge = $this->broker()->canChallenge(
             $request->user(), 
             $method,
-            $this->getAuthenticationPurpose($request)
+            $purpose
         );
         
         if ($canChallenge) { 
@@ -120,7 +129,6 @@ trait ChallengesUsers
         $response = $this->broker()->verify(
             $request->user(), 
             $method, 
-            $this->getAuthenticationPurpose($request),
             $request->all()
         );
 
@@ -146,15 +154,15 @@ trait ChallengesUsers
      * 
      * @param  Challengeable $user    
      * @param  string        $method  
-     * @param  sting         $purpose 
      * @param  array         $data    
      * @return \Illuminate\Http\Response         
      */
     protected function challengeAndRedirect(Challengeable $user, 
                                             $method, 
-                                            $purpose, 
                                             array $data = []
     ) {
+        $purpose = $this->manager()->wantsAuthenticationFor();
+        
         $response = $this->broker()->challenge(
             $user, 
             $method, 

@@ -3,6 +3,7 @@
 namespace BoxedCode\Laravel\TwoFactor\Http\Middleware;
 
 use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager;
+use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
 use Closure;
 
 class RequireTwoFactorAuthentication
@@ -48,11 +49,14 @@ class RequireTwoFactorAuthentication
     public function handle($request, Closure $next, $methods = null)
     {
         if ($this->shouldAuthenticate($request, $methods)) {
+
             if ($request->expectsJson()) {
                 throw new AuthenticationException;
             }
 
-            return redirect()->route('tfa');
+            return $this->manager->requestAuthentication(
+                Challenge::PURPOSE_AUTH
+            );
         }
 
         return $next($request);

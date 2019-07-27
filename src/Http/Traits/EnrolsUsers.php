@@ -22,13 +22,13 @@ trait EnrolsUsers
      */
     public function begin(Request $request, $method)
     {
+        $this->manager()->requestAuthentication(
+            Challenge::PURPOSE_ENROLMENT
+        );
+
         $response = $this->broker()->beginEnrolment(
             $request->user(), 
             $method
-        );
-
-        $this->setAuthenticationPurpose(
-            $request, Challenge::PURPOSE_ENROLMENT
         );
 
         return $this->routeResponse($response, $method);
@@ -113,7 +113,7 @@ trait EnrolsUsers
      */
     public function showEnrolled(Request $request, $method)
     {
-        $this->flushAuthenticationPurpose($request);
+        $this->manager()->revokeAuthenticationRequest();
 
         return $this->view('enrolled', $method, [
             'method' => $method

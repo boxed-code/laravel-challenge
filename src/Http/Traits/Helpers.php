@@ -9,43 +9,6 @@ use Illuminate\Http\Request;
 trait Helpers
 {
     /**
-     * Get the current authentication purpose.
-     * 
-     * @param  Request $request
-     * @return void
-     */
-    protected function getAuthenticationPurpose(Request $request)
-    {
-        return $request->session()->get(
-            '_tfa_purpose', Challenge::PURPOSE_AUTH
-        );
-    }
-
-    /**
-     * Set the current authentication purpose.
-     * 
-     * @param Request $request
-     * @param void
-     */
-    protected function setAuthenticationPurpose(Request $request, $purpose)
-    {
-        $request->session()->put(
-            '_tfa_purpose', $purpose
-        );
-    }
-
-    /**
-     * Flush the current authentication purpose.
-     * 
-     * @param  Request $request
-     * @return void
-     */
-    protected function flushAuthenticationPurpose(Request $request)
-    {
-        $request->session()->forget('_tfa_purpose');
-    }
-
-    /**
      * Find a custom view for the requested method 
      * and view name or return the default.
      * 
@@ -77,5 +40,10 @@ trait Helpers
     protected function broker()
     {
         return app('auth.tfa.broker');
+    }
+
+    protected function manager()
+    {
+        return app('auth.tfa');
     }
 }

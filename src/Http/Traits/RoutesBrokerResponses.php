@@ -4,6 +4,7 @@ namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
 
 use BoxedCode\Laravel\TwoFactor\BrokerResponse;
 use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker;
+use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager;
 use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorLogicException;
 
 trait RoutesBrokerResponses
@@ -25,6 +26,8 @@ trait RoutesBrokerResponses
      */
     public function showError()
     {
+        $this->manager()->revokeAuthenticationRequest();
+
         return $this->view('error');
     }
     
@@ -86,10 +89,9 @@ trait RoutesBrokerResponses
             // The challenge was verified by the method instance, the user 
             // should be redirected to the intended destination.
             case AuthBroker::CHALLENGE_VERIFIED:
+                $this->manager()->revokeAuthenticationRequest();
                 return $this->verified($response->challenge->user, $response->challenge) ?:
-                    redirect()
-                        ->to($this->verificationRedirectPath())
-                        ->withChallenge($response->challenge);
+                    redirect()->intended();
 
             // The code / token provided was invalid, the user should 
             // check that it correct and try again.
@@ -104,6 +106,11 @@ trait RoutesBrokerResponses
                 return $this->sendErrorResponse(
                     'No active challenge could be found, please restart authentication.'
                 );
+
+            // No authentication has been requested via AuthManager->requireAuthentication().
+            case AuthManager::NO_AUTH_REQUEST:
+                $this->manager()->revokeAuthenticationRequest();
+                return redirect()->to('/');
 
             // The requested enrolment does not exist, a new 
             // enrolment request should be made.

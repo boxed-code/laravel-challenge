@@ -302,16 +302,15 @@ class AuthBroker implements BrokerContract
      * 
      * @param  Challengeable $user   
      * @param  string        $method 
-     * @param  string        $purpose
      * @param  array         $data   
      * @return \BoxedCode\Laravel\TwoFactor\BrokerResponse       
      */
-    public function verify(Challengeable $user, $method, $purpose, array $data = [])
+    public function verify(Challengeable $user, $method, array $data = [])
     {
         $this->garbageCollection($user);
 
         // Check that we have a valid challenge for the user and method.
-        if (!($challenge = $user->challenges()->pending($method, $purpose)->first())) {
+        if (!($challenge = $user->challenges()->pending($method)->first())) {
             return $this->respond(static::CHALLENGE_NOT_FOUND);
         }
 

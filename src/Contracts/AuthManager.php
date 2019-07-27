@@ -8,6 +8,48 @@ use Illuminate\Auth\Events\Logout;
 interface AuthManager
 {
     /**
+     * Constant representing that no authentication request is in process.
+     */
+    const NO_AUTH_REQUEST = 'no_auth_request';
+
+    /**
+     * Create a new authentication request.
+     * 
+     * @param  string $purpose
+     * @param  string $using  
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function requestAuthentication($purpose = null, $using = null);
+
+    /**
+     * Determine whether an authentication request has been made.
+     * 
+     * @return bool
+     */
+    public function wantsAuthentication();
+
+    /**
+     * The 'purpose' of the current authentication request.
+     * 
+     * @return string|null
+     */
+    public function wantsAuthenticationFor();
+
+    /**
+     * The authentication method desired by the current request.
+     * 
+     * @return string|null
+     */
+    public function wantedAuthenticationMethod();
+
+    /**
+     * Revoke the current authentication request.
+     * 
+     * @return void
+     */
+    public function revokeAuthenticationRequest();
+
+    /**
      * Get the session lifetime.
      * 
      * @return integer
@@ -56,7 +98,7 @@ interface AuthManager
      * @param  array|string  $method
      * @return boolean        
      */
-    public function isAuthenticated($method = null);
+    public function isAuthenticated(string $method = null);
 
     /**
      * Handle the 'Verified' authentication event.

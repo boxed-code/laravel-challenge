@@ -39,6 +39,68 @@ class AuthManager implements ManagerContract
     }
 
     /**
+     * Create a new authentication request.
+     * 
+     * @param  string $purpose
+     * @param  string $using  
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function requestAuthentication($purpose = null, $using = null)
+    {
+        $this->session->put('_tfa_auth_request', [
+            'purpose' => $purpose, 
+            'method' => $using, 
+            'requested_at' => now(),
+        ]);
+
+        return redirect()->route('tfa');
+    }
+
+    /**
+     * Determine whether an authentication request has been made.
+     * 
+     * @return bool
+     */
+    public function wantsAuthentication()
+    {
+        return $this->getAuthRequest() ? true : false;
+    }
+
+    /**
+     * The 'purpose' of the current authentication request.
+     * 
+     * @return string|null
+     */
+    public function wantsAuthenticationFor()
+    {
+        if ($this->wantsAuthentication()) {
+            return $this->getAuthRequest()['purpose'];
+        }
+    }
+
+    /**
+     * The authentication method desired by the current request.
+     * 
+     * @return string|null
+     */
+    public function wantedAuthenticationMethod()
+    {
+        if ($this->wantsAuthentication()) {
+            return $this->getAuthRequest()['method'] ?? 'default';
+        }
+    }
+
+    /**
+     * Revoke the current authentication request.
+     * 
+     * @return void
+     */
+    public function revokeAuthenticationRequest()
+    {
+        $this->session->forget('_tfa_auth_request');
+    }
+
+    /**
      * Get the session lifetime.
      * 
      * @return integer
@@ -118,7 +180,7 @@ class AuthManager implements ManagerContract
      * @param  array|string  $method
      * @return boolean        
      */
-    public function isAuthenticated($method = null)
+    public function isAuthenticated(string $method = null)
     {
         $methods = (array) $method;
 
@@ -163,5 +225,19 @@ class AuthManager implements ManagerContract
     public function getSessionStore()
     {
         return $this->session;
+    }
+
+    /**
+     * Get the current authentication request state.
+     * 
+     * @return array|null
+     */
+    protected function getAuthRequest()
+    {
+        $key = '_tfa_auth_request';
+
+        if ($request = $this->session->get($key)) {
+            return $request;
+        }
     }
 }
