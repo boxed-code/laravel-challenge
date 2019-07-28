@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>2FA Verification</title>
-    @include('two_factor::_styles')
+    @include('challenge::_styles')
 </head>
 <body>
     <form method="POST" action="{{ $form_action_url }}">

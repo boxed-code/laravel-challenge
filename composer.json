@@ -1,6 +1,6 @@
 {
-    "name": "boxed-code/laravel-twofactor",
-    "description": "Middleware based, multi-provider two factor authentication",
+    "name": "boxed-code/laravel-challenge",
+    "description": "Multi-provider two factor authentication for laravel.",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "BoxedCode\\Laravel\\TwoFactor\\": "src/"
+            "BoxedCode\\Laravel\\Auth\\Challenge\\": "src/"
         }
     },
     "autoload-dev": {
@@ -31,7 +31,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "BoxedCode\\Laravel\\TwoFactor\\TwoFactorServiceProvider"
+                "BoxedCode\\Laravel\\Auth\\Challenge\\ChallengeServiceProvider"
             ]
         }
     },

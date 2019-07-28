@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Ooops! | 2FA Verification</title>
-    @include('two_factor::_styles')
+    @include('challenge::_styles')
 </head>
 <body>
     <div class="container">

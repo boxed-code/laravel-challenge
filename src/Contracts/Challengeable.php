@@ -1,25 +1,26 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Contracts;
+namespace BoxedCode\Laravel\Auth\Challenge\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 interface Challengeable
 {
     /**
-     * Get the users default two factor method name.
+     * Get the users default authentication method name.
      * 
      * @return string|bool
      */
-    public function getDefaultTwoFactorAuthMethod();
+    public function getDefaultAuthMethod();
 
     /**
-     * Can the user enrol in the supplied authentication method?
+     * Determine whether the user can authenticate with 
+     * the given method.
      * 
      * @param  string $method
      * @return bool
      */
-    public function canEnrolInTwoFactorAuth($method): bool;
+    public function canAuthenticateUsing($method): bool;
 
     /**
      * The users challenge relationship.

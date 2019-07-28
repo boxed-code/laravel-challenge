@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class TwoFactorChallenges extends Migration
+class ChallengeEnrolments extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class TwoFactorChallenges extends Migration
      */
     public function up()
     {
-        Schema::create('two_factor_challenges', function(Blueprint $table) {
-            $table->string('id')->primary();
+        Schema::create('challenge_enrolments', function(Blueprint $table) {
+            $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->string('method');
-            $table->string('purpose');
-            $table->timestamp('challenged_at')->nullable();
-            $table->timestamp('verified_at')->nullable();
             $table->text('state')->nullable();
+            $table->timestamp('setup_at')->nullable();
+            $table->timestamp('enrolled_at')->nullable();
             $table->timestamps();
 
-            $table->unique(['user_id', 'method'], 'unique_challenge');
+            $table->unique(['user_id', 'method'], 'unique_enrolment');
         });
     }
 
@@ -34,6 +33,6 @@ class TwoFactorChallenges extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('two_factor_challenges');
+        Schema::dropIfExists('challenge_enrolments');
     }
 }

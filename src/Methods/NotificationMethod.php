@@ -1,12 +1,12 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Methods;
+namespace BoxedCode\Laravel\Auth\Challenge\Methods;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
-use BoxedCode\Laravel\TwoFactor\Contracts\Method as MethodContract;
-use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorVerificationException;
-use BoxedCode\Laravel\TwoFactor\Methods\Method;
-use BoxedCode\Laravel\TwoFactor\Notifications\DefaultAuthenticationRequest;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Method as MethodContract;
+use BoxedCode\Laravel\Auth\Challenge\Exceptions\ChallengeVerificationException;
+use BoxedCode\Laravel\Auth\Challenge\Methods\Method;
+use BoxedCode\Laravel\Auth\Challenge\Notifications\DefaultAuthenticationRequest;
 
 class NotificationMethod extends Method implements MethodContract
 {
@@ -41,7 +41,7 @@ class NotificationMethod extends Method implements MethodContract
 
     /**
      * Verify the challenge by validating supplied $data and challenge $state, 
-     * if it is not valid throw a TwoFactorVerificationException. 
+     * if it is not valid throw a ChallengeVerificationException. 
      * 
      * If it is valid, return any additional state data that will be merged and 
      * persisted with the challenges existing state.
@@ -59,7 +59,7 @@ class NotificationMethod extends Method implements MethodContract
             return [];
         }
 
-        throw new TwoFactorVerificationException;
+        throw new ChallengeVerificationException;
     }
 
     /**

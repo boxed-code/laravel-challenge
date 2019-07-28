@@ -1,8 +1,8 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Listeners;
+namespace BoxedCode\Laravel\Auth\Challenge\Listeners;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager;
 use Illuminate\Auth\Events\Logout;
 
 class LogoutListener
@@ -10,14 +10,14 @@ class LogoutListener
     /**
      * The auth manager instance.
      * 
-     * @var \BoxedCode\Laravel\TwoFactor\Contracts\AuthManager
+     * @var \BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager
      */
     protected $manager;
 
     /**
      * Create a new logout listener instance.
      * 
-     * @param \BoxedCode\Laravel\TwoFactor\Contracts\AuthManager $manager
+     * @param \BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager $manager
      */
     public function __construct(AuthManager $manager)
     {

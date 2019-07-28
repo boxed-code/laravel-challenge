@@ -1,11 +1,11 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor;
+namespace BoxedCode\Laravel\Auth\Challenge;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager as ManagerContract;
-use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
-use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
-use BoxedCode\Laravel\TwoFactor\Events\Verified;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager as ManagerContract;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
+use BoxedCode\Laravel\Auth\Challenge\Events\Verified;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Collection;
@@ -48,13 +48,13 @@ class AuthManager implements ManagerContract
      */
     public function requestAuthentication($purpose = null, $using = null)
     {
-        $this->session->put('_tfa_auth_request', [
+        $this->session->put('_challenge_auth_request', [
             'purpose' => $purpose, 
             'method' => $using, 
             'requested_at' => now(),
         ]);
 
-        return redirect()->route('tfa');
+        return redirect()->route('challenge');
     }
 
     /**
@@ -98,13 +98,13 @@ class AuthManager implements ManagerContract
      */
     public function revokeAuthenticationRequest()
     {
-        $this->session->forget('_tfa_auth_request');
+        $this->session->forget('_challenge_auth_request');
     }
 
     /**
      * Determine whether the user has authenticates themselves.
      *
-     * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user
+     * @param  \BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable $user
      * @param  array|string|null  $method
      * @param  array|string|null $purpose
      * @param  integer|null $lifetime
@@ -159,7 +159,7 @@ class AuthManager implements ManagerContract
 
         return  (
             'all' === $enforcingStatus || 
-            'enrolled' === $enforcingStatus && $user->enrolments->count() > 0
+            'enrolled' === $enforcingStatus && $user->enrolments()->enrolled()->count() > 0
         );
     }
 
@@ -177,7 +177,7 @@ class AuthManager implements ManagerContract
     /**
      * Get the verified challenges from the store.
      *
-     * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user
+     * @param  \BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable $user
      * @return \Illuminate\Support\Collection
      */
    protected function getVerifiedChallengesFor(Challengeable $user, $lifetime = null)
@@ -212,7 +212,7 @@ class AuthManager implements ManagerContract
      */
     protected function getAuthRequest()
     {
-        $key = '_tfa_auth_request';
+        $key = '_challenge_auth_request';
 
         if ($request = $this->session->get($key)) {
             return $request;

@@ -1,13 +1,13 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor;
+namespace BoxedCode\Laravel\Auth\Challenge;
 
-use BoxedCode\Laravel\TwoFactor\AuthBrokerResponse;
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker as BrokerContract;
-use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
-use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
-use BoxedCode\Laravel\TwoFactor\Contracts\Enrolment;
-use BoxedCode\Laravel\TwoFactor\Methods\MethodManager;
+use BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthBroker as BrokerContract;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Enrolment;
+use BoxedCode\Laravel\Auth\Challenge\Methods\MethodManager;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -17,7 +17,7 @@ class AuthBroker implements BrokerContract
     /**
      * The method manager instance.
      * 
-     * @var \BoxedCode\Laravel\TwoFactor\Methods\MethodManager
+     * @var \BoxedCode\Laravel\Auth\Challenge\Methods\MethodManager
      */
     protected $methods;
 
@@ -54,7 +54,7 @@ class AuthBroker implements BrokerContract
      * @param  Challengeable $user       
      * @param  string        $method_name
      * @param  array         $state       
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse
      */
     public function beginEnrolment(Challengeable $user, $method_name, array $state = [])
     {
@@ -112,7 +112,7 @@ class AuthBroker implements BrokerContract
      * 
      * @param  Challengeable $user       
      * @param  string        $method_name
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse                 
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse                 
      */
     public function beforeSetup(Challengeable $user, $method_name)
     {
@@ -144,7 +144,7 @@ class AuthBroker implements BrokerContract
      * @param  Challengeable $user        
      * @param  string        $method_name 
      * @param  array         $data        
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse                     
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse                     
      */
     public function setup(Challengeable $user, $method_name, array $data = [])
     {
@@ -181,7 +181,7 @@ class AuthBroker implements BrokerContract
      * 
      * @param  Challengeable $user   
      * @param  string        $method 
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse             
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse             
      */
     public function enrol(Challengeable $user, $method_name)
     {
@@ -230,7 +230,7 @@ class AuthBroker implements BrokerContract
      * 
      * @param  Challengeable $user        
      * @param  string        $method_name 
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse
      */
     public function disenrol(Challengeable $user, $method_name)
     {
@@ -258,7 +258,7 @@ class AuthBroker implements BrokerContract
      * @param  string        $method_name 
      * @param  string        $purpose     
      * @param  array         $data        
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse            
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse            
      */
     public function challenge(Challengeable $user, $method_name, $purpose, array $data = [])
     {
@@ -303,7 +303,7 @@ class AuthBroker implements BrokerContract
      * @param  Challengeable $user   
      * @param  string        $method 
      * @param  array         $data   
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse       
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse       
      */
     public function verify(Challengeable $user, $method, array $data = [])
     {
@@ -316,7 +316,7 @@ class AuthBroker implements BrokerContract
 
         try {
             // Call the method instance to verify the data passed, if 
-            // the instance fails it will throw a TwoFactorVerificationException.
+            // the instance fails it will throw a ChallengeVerificationException.
             $state = $this->method($method)->verify($user, $challenge->state, $data);
 
             $challenge->fill([
@@ -335,7 +335,7 @@ class AuthBroker implements BrokerContract
             }
 
             return $this->respond(static::CHALLENGE_VERIFIED, ['challenge' => $challenge]);
-        } catch (Exceptions\TwoFactorVerificationException $ex) { /**/ }
+        } catch (Exceptions\ChallengeVerificationException $ex) { /**/ }
 
         return $this->respond(static::CHALLENGE_NOT_VERIFIED);
     }
@@ -344,7 +344,7 @@ class AuthBroker implements BrokerContract
      * Begin the enrolment challenge or enrol.
      * 
      * @param  Enrolment $enrolment
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse
      */
     protected function beginEnrolmentChallengeOrEnrol(Enrolment $enrolment)
     {
@@ -370,7 +370,7 @@ class AuthBroker implements BrokerContract
      * @param  Challengeable $user    
      * @param  string        $method_name 
      * @param  string        $purpose 
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse         
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse         
      */
     public function canChallenge(Challengeable $user, $method_name, $purpose)
     {
@@ -401,12 +401,12 @@ class AuthBroker implements BrokerContract
      * 
      * @param  Challengeable $user   
      * @param  string        $method 
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse
      */
     public function canBeginEnrolment(Challengeable $user, $method)
     {
         return (
-            $user->canEnrolInTwoFactorAuth($method) &&
+            $user->canAuthenticateUsing($method) &&
             0 === $user->enrolments()->enrolled($method)->count()
         );  
     }
@@ -434,7 +434,7 @@ class AuthBroker implements BrokerContract
      * 
      * @param  Challengeable $user        
      * @param  string        $method_name 
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse              
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse              
      */
     protected function getEnrolment(Challengeable $user, $method_name)
     {
@@ -473,7 +473,7 @@ class AuthBroker implements BrokerContract
      * 
      * @param  string $outcome 
      * @param  array  $payload 
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse    
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse    
      */
     protected function respond(string $outcome, array $payload = [])
     {
@@ -553,7 +553,7 @@ class AuthBroker implements BrokerContract
     /**
      * Get the method manager instance.
      * 
-     * @return \BoxedCode\Laravel\TwoFactor\Methods\MethodManager
+     * @return \BoxedCode\Laravel\Auth\Challenge\Methods\MethodManager
      */
     public function getMethodManager()
     {

@@ -1,13 +1,13 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor;
+namespace BoxedCode\Laravel\Auth\Challenge;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker as BrokerContract;
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager as ManagerContract;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthBroker as BrokerContract;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager as ManagerContract;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
-class TwoFactorServiceProvider extends ServiceProvider
+class ChallengeServiceProvider extends ServiceProvider
 {
     /**
      * Register the service provider.
@@ -17,8 +17,8 @@ class TwoFactorServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            $this->packagePath('config/two_factor.php'), 
-            'two_factor'
+            $this->packagePath('config/challenge.php'), 
+            'challenge'
         );
 
         $this->registerAuthBroker();
@@ -36,19 +36,19 @@ class TwoFactorServiceProvider extends ServiceProvider
         $this->app->bind(BrokerContract::class, function($app) {
             $manager = new Methods\MethodManager($app);
 
-            $config = config('two_factor', []);
+            $config = config('challenge', []);
 
             return (new AuthBroker($manager, $config))
                 ->setEventDispatcher($app['events']);
         });
 
-        $this->app->alias(BrokerContract::class, 'auth.tfa.broker');
+        $this->app->alias(BrokerContract::class, 'auth.challenge.broker');
     }
 
     protected function registerAuthManager()
     {
         $this->app->singleton(ManagerContract::class, function($app) {
-            $config = config('two_factor', []);
+            $config = config('challenge', []);
 
             return new AuthManager(
                 $app['session']->driver(), 
@@ -56,7 +56,7 @@ class TwoFactorServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->alias(ManagerContract::class, 'auth.tfa');
+        $this->app->alias(ManagerContract::class, 'auth.challenge');
     }
 
     /**
@@ -72,15 +72,15 @@ class TwoFactorServiceProvider extends ServiceProvider
         // Register the event listeners.
         $this->app['events']->listen(
             \Illuminate\Auth\Events\Logout::class, 
-            \BoxedCode\Laravel\TwoFactor\Listeners\LogoutListener::class
+            \BoxedCode\Laravel\Auth\Challenge\Listeners\LogoutListener::class
         );
 
         // Register the package views.
-        $this->loadViewsFrom($this->packagePath('views'), 'two_factor');
+        $this->loadViewsFrom($this->packagePath('views'), 'challenge');
 
         // Register the package configuration to publish.
         $this->publishes(
-            [$this->packagePath('config/two_factor.php') => config_path('two_factor.php')], 
+            [$this->packagePath('config/challenge.php') => config_path('challenge.php')], 
             'config'
         );
 
@@ -104,7 +104,7 @@ class TwoFactorServiceProvider extends ServiceProvider
             ); 
         };
 
-        Router::macro('tfa', function() use ($registerRoutes) {
+        Router::macro('challenge', function() use ($registerRoutes) {
             $registerRoutes();
         });
     }

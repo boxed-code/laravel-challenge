@@ -1,13 +1,13 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
+namespace BoxedCode\Laravel\Auth\Challenge\Http\Traits;
 
-use BoxedCode\Laravel\TwoFactor\AuthBroker;
-use BoxedCode\Laravel\TwoFactor\AuthBrokerResponse;
-use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
-use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
-use BoxedCode\Laravel\TwoFactor\Contracts\Enrolment;
-use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorLogicException;
+use BoxedCode\Laravel\Auth\Challenge\AuthBroker;
+use BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Enrolment;
+use BoxedCode\Laravel\Auth\Challenge\Exceptions\ChallengeLogicException;
 use Illuminate\Http\Request;
 use LogicException;
 
@@ -69,7 +69,7 @@ trait EnrolsUsers
 
         return $this->view('setup', $method, [
             'setup_data' => $response->data,
-            'form_action_url' => route('tfa.enrolment.setup', [$method])
+            'form_action_url' => route('challenge.enrolment.setup', [$method])
         ]);
     }
 

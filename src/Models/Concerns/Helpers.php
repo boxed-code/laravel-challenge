@@ -1,6 +1,6 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Models\Concerns;
+namespace BoxedCode\Laravel\Auth\Challenge\Models\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

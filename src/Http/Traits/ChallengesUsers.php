@@ -1,12 +1,12 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
+namespace BoxedCode\Laravel\Auth\Challenge\Http\Traits;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker;
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager;
-use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
-use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
-use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorLogicException;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthBroker;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
+use BoxedCode\Laravel\Auth\Challenge\Exceptions\ChallengeLogicException;
 use Illuminate\Http\Request;
 
 trait ChallengesUsers
@@ -41,7 +41,7 @@ trait ChallengesUsers
             return $this->challengeAndRedirect(
                 $request,
                 $request->user(),
-                $request->user()->getDefaultTwoFactorAuthMethod(),
+                $request->user()->getDefaultAuthMethod(),
                 $request->all()
             );
         }
@@ -53,7 +53,7 @@ trait ChallengesUsers
         // Otherwise, we show them the method selection screen.
         return $this->view('method', null, [
             'methods' => $methods, 
-            'form_action_url' => route('tfa.challenge')
+            'form_action_url' => route('challenge.dispatch')
         ]);
     }
 
@@ -82,7 +82,7 @@ trait ChallengesUsers
      * authentication method and needs to verify the token.
      * 
      * @param  \Illuminate\Http\Request $request   
-     * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challenge $challenge 
+     * @param  \BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge $challenge 
      * @return \Illuminate\Http\Response            
      */
     public function challenged(Request $request, Challenge $challenge)
@@ -118,7 +118,7 @@ trait ChallengesUsers
         
         if ($canChallenge) { 
             return $this->view('verify', $method, [
-                'form_action_url' => route('tfa.verify.form', [$method])
+                'form_action_url' => route('challenge.verify.form', [$method])
             ]);
         }
 
@@ -163,7 +163,7 @@ trait ChallengesUsers
      * the user to the verification path.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user    
+     * @param  \BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable $user    
      * @param  string        $method  
      * @param  array         $data    
      * @return \Illuminate\Http\Response         

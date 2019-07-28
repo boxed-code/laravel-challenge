@@ -1,6 +1,6 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor;
+namespace BoxedCode\Laravel\Auth\Challenge;
 
 class AuthBrokerResponse
 {

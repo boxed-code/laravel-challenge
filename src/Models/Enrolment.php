@@ -1,10 +1,10 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Models;
+namespace BoxedCode\Laravel\Auth\Challenge\Models;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
-use BoxedCode\Laravel\TwoFactor\Contracts\Enrolment as EnrolmentContract;
-use BoxedCode\Laravel\TwoFactor\Methods\MethodNameFormatter;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Enrolment as EnrolmentContract;
+use BoxedCode\Laravel\Auth\Challenge\Methods\MethodNameFormatter;
 
 class Enrolment extends \Illuminate\Database\Eloquent\Model implements EnrolmentContract
 {
@@ -15,7 +15,7 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
      *
      * @var string
      */
-    protected $table = 'two_factor_enrolments';
+    protected $table = 'challenge_enrolments';
 
     /**
      * The attributes that are mass assignable.

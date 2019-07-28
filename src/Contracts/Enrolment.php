@@ -1,6 +1,6 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Contracts;
+namespace BoxedCode\Laravel\Auth\Challenge\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

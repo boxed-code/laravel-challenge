@@ -1,10 +1,10 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Methods;
+namespace BoxedCode\Laravel\Auth\Challenge\Methods;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
-use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorVerificationException;
-use BoxedCode\Laravel\TwoFactor\Generators\NumericTokenGenerator;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
+use BoxedCode\Laravel\Auth\Challenge\Exceptions\ChallengeVerificationException;
+use BoxedCode\Laravel\Auth\Challenge\Generators\NumericTokenGenerator;
 
 abstract class Method
 {
@@ -126,7 +126,7 @@ abstract class Method
 
     /**
      * Verify the challenge by validating supplied $data and challenge $state, 
-     * if it is not valid throw a TwoFactorVerificationException. 
+     * if it is not valid throw a ChallengeVerificationException. 
      * 
      * If it is valid, return any additional state data that will be merged and 
      * persisted with the challenges existing state.
@@ -138,13 +138,13 @@ abstract class Method
      */
     public function verify(Challengeable $user, array $state = [], array $data = []): array
     {
-        throw new TwoFactorVerificationException;
+        throw new ChallengeVerificationException;
     }
 
     /**
      * Get a token generator instance for the method.
      * 
-     * @return \BoxedCode\Laravel\TwoFactor\Contracts\TokenGenerator
+     * @return \BoxedCode\Laravel\Auth\Challenge\Contracts\TokenGenerator
      */
     public function generator()
     {

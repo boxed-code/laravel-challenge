@@ -1,8 +1,8 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Events;
+namespace BoxedCode\Laravel\Auth\Challenge\Events;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
 
 class Challenged
 {    

@@ -1,10 +1,10 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
+namespace BoxedCode\Laravel\Auth\Challenge\Http\Traits;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker;
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager;
-use BoxedCode\Laravel\TwoFactor\Exceptions\TwoFactorLogicException;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthBroker;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager;
+use BoxedCode\Laravel\Auth\Challenge\Exceptions\ChallengeLogicException;
 
 trait RoutesBrokerResponses
 {
@@ -35,12 +35,12 @@ trait RoutesBrokerResponses
      * an associated error message.
      * 
      * @param sting $message
-     * @param \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse $response|null
+     * @param \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse $response|null
      * @return \Illuminate\Http\RedirectResponse
      */
     protected function sendErrorResponse($message, $response = null)
     {
-        return redirect()->route('tfa.error')
+        return redirect()->route('challenge.error')
             ->withErrors([
                 $message
             ]);
@@ -53,7 +53,7 @@ trait RoutesBrokerResponses
      * @param  BrokerResponse|string $response
      * @param  string|null    $method   
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-     * @throws TwoFactorLogicException
+     * @throws ChallengeLogicException
      */
     protected function routeResponse($request, $response, $method = null)
     {
@@ -63,28 +63,28 @@ trait RoutesBrokerResponses
             // should be redirected to the methods setup form.
             case AuthBroker::METHOD_REQUIRES_SETUP:
                 return $this->requiresSetup($request, $response->enrolment) ?:
-                    redirect()->route('tfa.enrolment.setup', [$method])
+                    redirect()->route('challenge.enrolment.setup', [$method])
                         ->withEnrolment($response->enrolment);
 
             // The user has been successfully enrolled into the requested 
             // authentication method and should be shown the enrolment success view.           
             case AuthBroker::USER_ENROLLED:
                 return $this->enrolled($request, $response->enrolment) ?:
-                    redirect()->route('tfa.enrolled', [$method])
+                    redirect()->route('challenge.enrolled', [$method])
                         ->withEnrolment($response->enrolment);
 
             // The user has been disenrolled for the requested authentication 
             // method an should be shown the disenrolment success view.
             case AuthBroker::USER_DISENROLLED:
                 return $this->disenrolled($request, $response->enrolment) ?:
-                    redirect()->route('tfa.disenrolled', [$method])
+                    redirect()->route('challenge.disenrolled', [$method])
                         ->withEnrolment($response->enrolment);
 
             // The user has been challenged via the chosen 
             // authentication method and needs to verify the token.
             case AuthBroker::USER_CHALLENGED:
                 return $this->challenged($request, $response->challenge) ?: 
-                    redirect()->route('tfa.verify.form', [$method])
+                    redirect()->route('challenge.verify.form', [$method])
                         ->withChallenge($response->challenge);
 
             // The challenge was verified by the method instance, the user 
@@ -162,7 +162,7 @@ trait RoutesBrokerResponses
                 );
         }
 
-        throw new TwoFactorLogicException(
+        throw new ChallengeLogicException(
             sprintf('Broker returned an invalid response. [%s]', $response)
         );
     }

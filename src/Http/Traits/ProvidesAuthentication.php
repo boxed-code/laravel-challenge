@@ -1,8 +1,8 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
+namespace BoxedCode\Laravel\Auth\Challenge\Http\Traits;
 
-trait TwoFactorAuthentication
+trait ProvidesAuthentication
 {
     use EnrolsUsers, 
         ChallengesUsers, 

@@ -1,5 +1,5 @@
 <?php
-use BoxedCode\Laravel\TwoFactor\Generators\StringTokenGenerator;
+use BoxedCode\Laravel\Auth\Challenge\Generators\StringTokenGenerator;
 
 return [
     /*
@@ -28,8 +28,8 @@ return [
     */
    
     'models' => [
-        'challenge' => \BoxedCode\Laravel\TwoFactor\Models\Challenge::class,
-        'enrolment' => \BoxedCode\Laravel\TwoFactor\Models\Enrolment::class,
+        'challenge' => \BoxedCode\Laravel\Auth\Challenge\Models\Challenge::class,
+        'enrolment' => \BoxedCode\Laravel\Auth\Challenge\Models\Enrolment::class,
     ],
 
     /*
@@ -48,19 +48,19 @@ return [
          | the value below. By default it is set to zero, this means that the 
          | verification will last for the duration of the session.
          */
-        'verification' => env('TWO_FACTOR_VERIFICATION_LIFETIME', 0),
+        'verification' => env('challenge_VERIFICATION_LIFETIME', 0),
 
         /*
          | All challenges issued are only valid for a specific length of time, you 
          | can set this here,by default this is set to one hour.
          */
-        'challenge' => env('TWO_FACTOR_CHALLENGE_LIFETIME', 60 * 60),
+        'challenge' => env('challenge_CHALLENGE_LIFETIME', 60 * 60),
 
         /*
          | As with challenges, all incomplete enrolments are only valid for specific 
          | length of time, by default this is also set to one hour.
          */
-        'enrolment' => env('TWO_FACTOR_ENROLMENT_LIFETIME', 60 * 60),
+        'enrolment' => env('challenge_ENROLMENT_LIFETIME', 60 * 60),
 
     ],
 
@@ -102,7 +102,7 @@ return [
             'label' => 'SMS',
             'method' => 'notification',
             'channels' => ['\NotificationChannels\Twilio\TwilioChannel'],
-            'notification' => \BoxedCode\Laravel\TwoFactor\Notifications\TwilioAuthenticationRequest::class,
+            'notification' => \BoxedCode\Laravel\Auth\Challenge\Notifications\TwilioAuthenticationRequest::class,
         ],
 
         'authenticator' => [

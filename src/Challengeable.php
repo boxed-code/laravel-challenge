@@ -1,19 +1,19 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor;
+namespace BoxedCode\Laravel\Auth\Challenge;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait Challengeable
 {
     /**
-     * Get the users default two factor method name.
+     * Get the users default authentication method name.
      * 
      * @return string|bool
      */
-    public function getDefaultTwoFactorAuthMethod()
+    public function getDefaultAuthMethod()
     {
-        $manager = app('auth.tfa.broker')->getMethodManager();
+        $manager = app('auth.challenge.broker')->getMethodManager();
 
         $default = $manager->getDefaultMethod();
 
@@ -34,7 +34,7 @@ trait Challengeable
     public function challenges(): HasMany
     {
         return $this->hasMany(
-            config('two_factor.models.challenge')
+            config('challenge.models.challenge')
         );
     }
 
@@ -46,7 +46,7 @@ trait Challengeable
     public function enrolments(): HasMany
     {
         return $this->hasMany(
-            config('two_factor.models.enrolment')
+            config('challenge.models.enrolment')
         );
     }
 }

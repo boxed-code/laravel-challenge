@@ -1,9 +1,9 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Http\Traits;
+namespace BoxedCode\Laravel\Auth\Challenge\Http\Traits;
 
-use BoxedCode\Laravel\TwoFactor\AuthBroker;
-use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
+use BoxedCode\Laravel\Auth\Challenge\AuthBroker;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
 use Illuminate\Http\Request;
 
 trait Helpers
@@ -19,13 +19,13 @@ trait Helpers
      */
     protected function view($name, $method = null, array $data = [])
     {
-        $methodViewName = "two_factor::$method.$name";
+        $methodViewName = "challenge::$method.$name";
 
         if (!empty($method) && view()->exists($methodViewName)) {
             $view = $methodViewName;
         }
 
-        $view = (isset($view) ? $view : "two_factor::$name");
+        $view = (isset($view) ? $view : "challenge::$name");
 
         return response()
             ->view($view, $data)
@@ -35,15 +35,15 @@ trait Helpers
     /**
      * Get the authentication broker instance.
      * 
-     * @return \BoxedCode\Laravel\TwoFactor\Contracts\AuthBroker
+     * @return \BoxedCode\Laravel\Auth\Challenge\Contracts\AuthBroker
      */
     protected function broker()
     {
-        return app('auth.tfa.broker');
+        return app('auth.challenge.broker');
     }
 
     protected function manager()
     {
-        return app('auth.tfa');
+        return app('auth.challenge');
     }
 }

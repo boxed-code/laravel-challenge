@@ -1,9 +1,9 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Contracts;
+namespace BoxedCode\Laravel\Auth\Challenge\Contracts;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
-use BoxedCode\Laravel\TwoFactor\Events\Verified;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
+use BoxedCode\Laravel\Auth\Challenge\Events\Verified;
 use Illuminate\Auth\Events\Logout;
 
 interface AuthManager
@@ -53,7 +53,7 @@ interface AuthManager
     /**
      * Determine whether the user has authenticates themselves.
      *
-     * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user
+     * @param  \BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable $user
      * @param  array|string|null  $method
      * @param  array|string|null $purpose
      * @param  integer|null $lifetime

@@ -1,8 +1,8 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Contracts;
+namespace BoxedCode\Laravel\Auth\Challenge\Contracts;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 
 interface AuthBroker
@@ -118,7 +118,7 @@ interface AuthBroker
      * 
      * @param  Challengeable $user       
      * @param  string        $method_name
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse                 
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse                 
      */
     public function beforeSetup(Challengeable $user, $method_name);
 
@@ -128,7 +128,7 @@ interface AuthBroker
      * @param  Challengeable $user        
      * @param  string        $method_name 
      * @param  array         $data        
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse                     
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse                     
      */
     public function setup(Challengeable $user, $method_name, array $data = []);
 
@@ -137,7 +137,7 @@ interface AuthBroker
      * 
      * @param  Challengeable $user   
      * @param  string        $method 
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse             
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse             
      */
     public function enrol(Challengeable $user, $method);
 
@@ -146,7 +146,7 @@ interface AuthBroker
      * 
      * @param  Challengeable $user        
      * @param  string        $method_name 
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse
      */
     public function disenrol(Challengeable $user, $method_name);
 
@@ -157,7 +157,7 @@ interface AuthBroker
      * @param  string        $method_name 
      * @param  string        $purpose     
      * @param  array         $data        
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse            
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse            
      */
     public function challenge(Challengeable $user, $method_name, $purpose, array $data = []);
 
@@ -167,7 +167,7 @@ interface AuthBroker
      * @param  Challengeable $user   
      * @param  string        $method 
      * @param  array         $data   
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse       
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse       
      */
     public function verify(Challengeable $user, $method, array $data = []);
 
@@ -177,7 +177,7 @@ interface AuthBroker
      * @param  Challengeable $user       
      * @param  string        $method_name
      * @param  array         $state       
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse
      */
     public function beginEnrolment(Challengeable $user, $method_name, array $state = []);
 
@@ -188,7 +188,7 @@ interface AuthBroker
      * @param  Challengeable $user    
      * @param  string        $method_name
      * @param  string        $purpose 
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse         
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse         
      */
     public function canChallenge(Challengeable $user, $method_name, $purpose);
 
@@ -197,7 +197,7 @@ interface AuthBroker
      * 
      * @param  Challengeable $user   
      * @param  string        $method 
-     * @return \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse
+     * @return \BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse
      */
     public function canBeginEnrolment(Challengeable $user, $method);
 
@@ -226,7 +226,7 @@ interface AuthBroker
     /**
      * Get the method manager instance.
      * 
-     * @return \BoxedCode\Laravel\TwoFactor\Methods\MethodManager
+     * @return \BoxedCode\Laravel\Auth\Challenge\Methods\MethodManager
      */
     public function getMethodManager();
 }

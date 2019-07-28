@@ -1,12 +1,12 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Http\Middleware;
+namespace BoxedCode\Laravel\Auth\Challenge\Http\Middleware;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\AuthManager;
-use BoxedCode\Laravel\TwoFactor\Contracts\Challenge;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
 use Closure;
 
-class RequireTwoFactorAuthentication
+class RequireAuthentication
 {
     /**
      * The session manager instance.
@@ -32,10 +32,10 @@ class RequireTwoFactorAuthentication
      * @var array
      */
     protected $except = [
-        '/tfa',
-        '/tfa/error',
-        '/tfa/challenge',
-        '/tfa/*/verify',
+        '/challenge',
+        '/challenge/error',
+        '/challenge/dispatch',
+        '/challenge/*/verify',
     ];
 
     /**

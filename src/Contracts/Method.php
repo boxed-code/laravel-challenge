@@ -1,8 +1,8 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Contracts;
+namespace BoxedCode\Laravel\Auth\Challenge\Contracts;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\Challengeable;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
 
 interface Method
 {
@@ -76,7 +76,7 @@ interface Method
 
     /**
      * Verify the challenge by validating supplied $data and challenge $state, 
-     * if it is not valid throw a TwoFactorVerificationException. 
+     * if it is not valid throw a ChallengeVerificationException. 
      * 
      * If it is valid, return any additional state data that will be merged and 
      * persisted with the challenges existing state.
@@ -85,7 +85,7 @@ interface Method
      * @param  array         $state 
      * @param  array         $data  
      * @return array               
-     * @throws TwoFactorVerificationException
+     * @throws ChallengeVerificationException
      */
     public function verify(Challengeable $user, array $state = [], array $data = []): array;
 }

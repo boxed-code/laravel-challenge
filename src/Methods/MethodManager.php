@@ -1,6 +1,6 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Methods;
+namespace BoxedCode\Laravel\Auth\Challenge\Methods;
 
 use InvalidArgumentException;
 use Illuminate\Support\Str;
@@ -98,7 +98,7 @@ class MethodManager
      */
     public function getEnabledMethods()
     {
-        return $this->app['config']['two_factor.enabled'];
+        return $this->app['config']['challenge.enabled'];
     }
 
     /**
@@ -130,7 +130,7 @@ class MethodManager
      * Create a notification method instance.
      * 
      * @param  array $config
-     * @return \BoxedCode\Laravel\TwoFactor\Contracts\Method
+     * @return \BoxedCode\Laravel\Auth\Challenge\Contracts\Method
      */
     protected function createNotificationMethod($name, $config)
     {
@@ -162,6 +162,6 @@ class MethodManager
      */
     protected function getConfig($name)
     {
-        return $this->app['config']["two_factor.methods.{$name}"];
+        return $this->app['config']["challenge.methods.{$name}"];
     }
 }

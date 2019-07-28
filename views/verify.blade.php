@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Verify | 2FA Verification</title>
-    @include('two_factor::_styles')
+    @include('challenge::_styles')
 </head>
 <body>
     <form method="POST" action="{{ $form_action_url }}">
@@ -29,7 +29,7 @@
                             @csrf
                             <div class="mt-3">
                                 <button class="btn btn-primary" type="submit">Verify</button>
-                                or <a href="{{ route('tfa') }}">select a different method</a>
+                                or <a href="{{ route('challenge') }}">select a different method</a>
                             </div>
                         </div>
                     </div>

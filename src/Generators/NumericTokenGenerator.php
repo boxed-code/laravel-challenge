@@ -1,8 +1,8 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Generators;
+namespace BoxedCode\Laravel\Auth\Challenge\Generators;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\TokenGenerator;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\TokenGenerator;
 
 class NumericTokenGenerator implements TokenGenerator
 {

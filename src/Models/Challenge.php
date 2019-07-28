@@ -1,8 +1,8 @@
 <?php
 
-namespace BoxedCode\Laravel\TwoFactor\Models;
+namespace BoxedCode\Laravel\Auth\Challenge\Models;
 
-use BoxedCode\Laravel\TwoFactor\Contracts\Challenge as ChallengeContract;
+use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge as ChallengeContract;
 use Illuminate\Database\Eloquent\Model;
 
 class Challenge extends Model implements ChallengeContract
@@ -14,7 +14,7 @@ class Challenge extends Model implements ChallengeContract
      *
      * @var string
      */
-    protected $table = 'two_factor_challenges';
+    protected $table = 'challenge_challenges';
 
     /**
      * The attributes that are mass assignable.
