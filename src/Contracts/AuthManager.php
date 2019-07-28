@@ -54,10 +54,15 @@ interface AuthManager
      * Determine whether the user has authenticates themselves.
      *
      * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user
-     * @param  array|string  $method
+     * @param  array|string|null  $method
+     * @param  array|string|null $purpose
+     * @param  integer|null $lifetime
      * @return boolean        
      */
-    public function isAuthenticated(Challengeable $user, $method = null);
+    public function isAuthenticated(Challengeable $user, 
+                                    $method = null, 
+                                    $purpose = null, 
+                                    $lifetime = null);
 
     /**
      * Flush the verified challenges for the current user.

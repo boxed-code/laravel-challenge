@@ -105,17 +105,21 @@ class AuthManager implements ManagerContract
      * Determine whether the user has authenticates themselves.
      *
      * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user
-     * @param  array|string  $method
-     * @param  array|string $purpose
+     * @param  array|string|null  $method
+     * @param  array|string|null $purpose
+     * @param  integer|null $lifetime
      * @return boolean        
      */
-    public function isAuthenticated(Challengeable $user, $method = null, $purpose = null)
-    {
+    public function isAuthenticated(Challengeable $user, 
+                                    $method = null, 
+                                    $purpose = null, 
+                                    $lifetime = null
+    ) {
         $methods = (array) $method;
 
         $purposes = (array) $purpose;
 
-        $challenges = $this->getVerifiedChallengesFor($user);
+        $challenges = $this->getVerifiedChallengesFor($user, $lifetime);
 
         if ($methods) {
             $challenges = $challenges->whereIn(
@@ -176,10 +180,10 @@ class AuthManager implements ManagerContract
      * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user
      * @return \Illuminate\Support\Collection
      */
-   protected function getVerifiedChallengesFor(Challengeable $user)
+   protected function getVerifiedChallengesFor(Challengeable $user, $lifetime = null)
     {
-        return $user->challenges->filter(function($item) {
-            $lifetime = $this->getVerificationLifetime();
+        return $user->challenges->filter(function($item) use ($lifetime) {
+            $lifetime = $lifetime ?: $this->getVerificationLifetime();
 
             if ($lifetime > 0) {
                 return $item->verified_at && $item->verified_at->greaterThan(

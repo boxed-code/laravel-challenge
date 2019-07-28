@@ -44,18 +44,22 @@ class RequireTwoFactorAuthentication
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
      * @param  string|null  $guard
+     * @param  string|null  $purpose
      * @return mixed
      */
-    public function handle($request, Closure $next, $methods = null)
+    public function handle($request, Closure $next, $purpose = null, $lifetime = null)
     {
-        if ($this->shouldAuthenticate($request, $methods)) {
+        $purposes = $this->expandPurposeString($purpose);
+
+        if ($this->shouldAuthenticate($request, $purposes, $lifetime)) {
+            session()->put('url.intended', $request->fullUrl());
 
             if ($request->expectsJson()) {
                 throw new AuthenticationException;
             }
 
             return $this->manager->requestAuthentication(
-                Challenge::PURPOSE_AUTH
+                !empty($purposes) ? $purposes[0] : Challenge::PURPOSE_AUTH
             );
         }
 
@@ -63,17 +67,32 @@ class RequireTwoFactorAuthentication
     }
 
     /**
+     * Expand a '|' delimited purpose string to an array.
+     * 
+     * @param  string|null $purpose
+     * @return array|null
+     */
+    protected function expandPurposeString($purpose)
+    {
+        if (is_string($purpose)) {
+            return explode('|', $purpose);
+        }
+    }
+
+    /**
      * Ascertain whether we should redirect for authentication.
      * 
      * @param  \Illuminate\Http\Request $request
+     * @param  string|array|null $purposes
+     * @param  integer|null
      * @return bool
      */
-    protected function shouldAuthenticate($request, $methods)
+    protected function shouldAuthenticate($request, $purposes, $lifetime)
     {
         return 
             !$this->inExceptArray($request) &&
             $this->manager->shouldEnforceFor($request->user()) &&
-            !$this->manager->isAuthenticated($request->user(), $methods);
+            !$this->manager->isAuthenticated($request->user(), null, $purposes, $lifetime);
     }
 
     /**

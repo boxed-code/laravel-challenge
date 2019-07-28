@@ -70,12 +70,17 @@ class Challenge extends Model implements ChallengeContract
      * Challenge method scope.
      * 
      * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  sting $method
+     * @param  string $method
+     * @param  string|null $purpose
      * @return void
      */
-    public function scopeMethod($query, $method)
+    public function scopeMethod($query, $method, $purpose = null)
     {
         $query->where('method', '=', $method);
+
+        if ($purpose) {
+            $query->where('purpose', '=', $purpose);
+        }
     }
 
     /**

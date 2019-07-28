@@ -272,7 +272,7 @@ class AuthBroker implements BrokerContract
         }
 
         // Flush ALL previous challenges.
-        $user->challenges()->method($method_name)->delete();
+        $user->challenges()->method($method_name, $purpose)->delete();
 
         // Next, we check that the user is either enrolled or that 
         // this challenge is part of the enrolment process.
@@ -310,7 +310,7 @@ class AuthBroker implements BrokerContract
         $this->garbageCollection($user);
 
         // Check that we have a valid challenge for the user and method.
-        if (!($challenge = $user->challenges()->pending($method)->first())) {
+        if (!($challenge = $user->challenges()->pending($method)->latest()->first())) {
             return $this->respond(static::CHALLENGE_NOT_FOUND);
         }
 
