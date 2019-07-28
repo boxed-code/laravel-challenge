@@ -57,10 +57,10 @@ interface AuthManager
      * @param  array|string  $method
      * @return boolean        
      */
-    public function isAuthenticated(Challengeable $user, string $method = null);
+    public function isAuthenticated(Challengeable $user, $method = null);
 
     /**
-     * Flush all challenges for the current user.
+     * Flush the verified challenges for the current user.
      * 
      * @param  Challengeable $user
      * @return void    

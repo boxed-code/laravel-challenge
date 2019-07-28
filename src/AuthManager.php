@@ -106,17 +106,26 @@ class AuthManager implements ManagerContract
      *
      * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user
      * @param  array|string  $method
+     * @param  array|string $purpose
      * @return boolean        
      */
-    public function isAuthenticated(Challengeable $user, string $method = null)
+    public function isAuthenticated(Challengeable $user, $method = null, $purpose = null)
     {
         $methods = (array) $method;
 
-        $challenges = $this->getValidChallengesFor($user);
+        $purposes = (array) $purpose;
 
-        if ($method) {
+        $challenges = $this->getVerifiedChallengesFor($user);
+
+        if ($methods) {
             $challenges = $challenges->whereIn(
-                'method', $method
+                'method', $methods
+            );
+        }
+
+        if ($purposes) {
+            $challenges = $challenges->whereIn(
+                'purpose', $purposes
             );
         }
 
@@ -124,14 +133,14 @@ class AuthManager implements ManagerContract
     }
 
     /**
-     * Flush all challenges for the current user.
+     * Flush the verified challenges for the current user.
      * 
      * @param  Challengeable $user
      * @return void    
      */
     public function flushChallenges(Challengeable $user)
     {
-        $user->challenges()->delete();
+        $user->challenges()->whereNotNull('verified_at')->delete();
     }
 
     /**
@@ -146,12 +155,12 @@ class AuthManager implements ManagerContract
     }
 
     /**
-     * Get the valid challenges from the store.
+     * Get the verified challenges from the store.
      *
      * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user
      * @return \Illuminate\Support\Collection
      */
-   protected function getValidChallengesFor(Challengeable $user)
+   protected function getVerifiedChallengesFor(Challengeable $user)
     {
         return $user->challenges->filter(function($item) {
             $lifetime = $this->getVerificationLifetime();
@@ -161,7 +170,8 @@ class AuthManager implements ManagerContract
                     now()->subSeconds($lifetime)
                 );
             }
-            return true;
+
+            return $item->verified_at ? true : false;
         });
     }
 
