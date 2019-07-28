@@ -144,6 +144,22 @@ class AuthManager implements ManagerContract
     }
 
     /**
+     * Determine whether we should enforce two factor authentication for the user.
+     * 
+     * @param  Challengeable $user
+     * @return bool     
+     */
+    public function shouldEnforceFor(Challengeable $user)
+    {
+        $enforcingStatus = $this->config['enforce'];
+
+        return  (
+            'all' === $enforcingStatus || 
+            'enrolled' === $enforcingStatus && $user->enrolments->count() > 0
+        );
+    }
+
+    /**
      * Get the length of time before another challenge/verification 
      * sequence is required.
      * 

@@ -68,6 +68,14 @@ interface AuthManager
     public function flushChallenges(Challengeable $user);
 
     /**
+     * Determine whether we should enforce two factor authentication for the user.
+     * 
+     * @param  Challengeable $user
+     * @return bool     
+     */
+    public function shouldEnforceFor(Challengeable $user);
+
+    /**
      * Get the session store instance.
      * 
      * @return \Illuminate\Contracts\Session\Session

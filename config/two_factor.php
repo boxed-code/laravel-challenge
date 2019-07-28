@@ -4,6 +4,22 @@ use BoxedCode\Laravel\TwoFactor\Generators\StringTokenGenerator;
 return [
     /*
     |--------------------------------------------------------------------------
+    | Enforcing Status
+    |--------------------------------------------------------------------------
+    |
+    | You can select to enable two factor authentication for all users or only 
+    | those who are enrolled in one or more method.
+    |
+    | 'all'    -   All users, whether enrolled or not, effectively locking 
+    |              non-enrolled users out.
+    | 'enrolled' - Only users that are enrolled in one or more authentication.
+    |
+    */
+   
+    'enforce' => 'enrolled',
+
+    /*
+    |--------------------------------------------------------------------------
     | Models
     |--------------------------------------------------------------------------
     |

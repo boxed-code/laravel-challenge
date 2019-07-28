@@ -70,7 +70,9 @@ class RequireTwoFactorAuthentication
      */
     protected function shouldAuthenticate($request, $methods)
     {
-        return !$this->inExceptArray($request) &&
+        return 
+            !$this->inExceptArray($request) &&
+            $this->manager->shouldEnforceFor($request->user()) &&
             !$this->manager->isAuthenticated($request->user(), $methods);
     }
 
