@@ -31,7 +31,7 @@ trait ChallengesUsers
         // Send an error if there are no enrolments for the current user.
         if (0 === $enrolmentCount) { 
             return $this->routeResponse(
-                $request, AuthBroker::ENROLMENT_NOT_FOUND
+                $request, AuthBroker::USER_NOT_ENROLLED
             ); 
         }
 
