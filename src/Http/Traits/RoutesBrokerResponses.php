@@ -35,9 +35,10 @@ trait RoutesBrokerResponses
      * an associated error message.
      * 
      * @param sting $message
+     * @param \BoxedCode\Laravel\TwoFactor\AuthBrokerResponse $response|null
      * @return \Illuminate\Http\RedirectResponse
      */
-    protected function sendErrorResponse($message)
+    protected function sendErrorResponse($message, $response = null)
     {
         return redirect()->route('tfa.error')
             ->withErrors([
@@ -47,49 +48,49 @@ trait RoutesBrokerResponses
 
     /**
      * Route a broker response to the correct handler.
-     * 
+     *
+     * @param  Request $request
      * @param  BrokerResponse|string $response
      * @param  string|null    $method   
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      * @throws TwoFactorLogicException
      */
-    protected function routeResponse($response, $method = null)
+    protected function routeResponse($request, $response, $method = null)
     {
         switch ($response) 
         {
             // The enrolment method requires additional setup, the user 
             // should be redirected to the methods setup form.
             case AuthBroker::METHOD_REQUIRES_SETUP:
-                return $this->requiresSetup($response->enrolment->user, $response->enrolment) ?:
+                return $this->requiresSetup($request, $response->enrolment) ?:
                     redirect()->route('tfa.enrolment.setup', [$method])
                         ->withEnrolment($response->enrolment);
 
             // The user has been successfully enrolled into the requested 
             // authentication method and should be shown the enrolment success view.           
             case AuthBroker::USER_ENROLLED:
-                return $this->enrolled($response->enrolment->user, $response->enrolment) ?:
+                return $this->enrolled($request, $response->enrolment) ?:
                     redirect()->route('tfa.enrolled', [$method])
                         ->withEnrolment($response->enrolment);
 
             // The user has been disenrolled for the requested authentication 
             // method an should be shown the disenrolment success view.
             case AuthBroker::USER_DISENROLLED:
-                return $this->disenrolled($response->enrolment->user, $response->enrolment) ?:
+                return $this->disenrolled($request, $response->enrolment) ?:
                     redirect()->route('tfa.disenrolled', [$method])
                         ->withEnrolment($response->enrolment);
 
             // The user has been challenged via the chosen 
             // authentication method and needs to verify the token.
             case AuthBroker::USER_CHALLENGED:
-                return $this->challenged($response->challenge->user, $response->challenge) ?: 
+                return $this->challenged($request, $response->challenge) ?: 
                     redirect()->route('tfa.verify.form', [$method])
                         ->withChallenge($response->challenge);
 
             // The challenge was verified by the method instance, the user 
             // should be redirected to the intended destination.
             case AuthBroker::CHALLENGE_VERIFIED:
-                $this->manager()->revokeAuthenticationRequest();
-                return $this->verified($response->challenge->user, $response->challenge) ?:
+                return $this->verified($request, $response->challenge) ?:
                     redirect()->intended();
 
             // The code / token provided was invalid, the user should 
@@ -103,7 +104,8 @@ trait RoutesBrokerResponses
             // challenge should be made.
             case AuthBroker::CHALLENGE_NOT_FOUND:
                 return $this->sendErrorResponse(
-                    'No active challenge could be found, please restart authentication.'
+                    'No active challenge could be found, please restart authentication.',
+                    $response
                 );
 
             // No authentication has been requested via AuthManager->requireAuthentication().
@@ -115,7 +117,8 @@ trait RoutesBrokerResponses
             // enrolment request should be made.
             case AuthBroker::ENROLMENT_NOT_FOUND:
                 return $this->sendErrorResponse(
-                    'No active enrolment could be found, please restart enrolment.'
+                    'No active enrolment could be found, please restart enrolment.',
+                    $response
                 );
 
             // The requested method is not available for enrolment.
@@ -124,25 +127,28 @@ trait RoutesBrokerResponses
                     sprintf(
                         'The %s method is not available for enrollment.', 
                         $method
-                    )
+                    ),
+                    $response
                 );
 
             // The user is already enrolled in the authentication method.
             case AuthBroker::USER_ALREADY_ENROLLED:
-                return  $this->sendErrorResponse(
+                return $this->sendErrorResponse(
                     sprintf(
                         'The user is already enrolled in %s two factor authentication.', 
                         $method
-                    )
+                    ),
+                    $response
                 );
 
             // The user is not enrolled in the requested authentication method.
             case AuthBroker::USER_NOT_ENROLLED:
-                return  $this->sendErrorResponse(
+                return $this->sendErrorResponse(
                     sprintf(
                         'Two factor authentication via %s is not enabled for this user.', 
                         $method
-                    )
+                    ),
+                    $response
                 );
 
             // The user cannot enrol into the requested authentication method.
@@ -151,7 +157,8 @@ trait RoutesBrokerResponses
                     sprintf(
                         'The user cannot enrol into %s two factor authentication.', 
                         $method
-                    )
+                    ),
+                    $response
                 );
         }
 

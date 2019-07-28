@@ -14,27 +14,32 @@ trait ChallengesUsers
     /**
      * Show the authentication method selection view.
      * 
-     * @param  Request $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Contracts\View\View
      */
     public function showMethodSelectionForm(Request $request)
     {
         // Authentications must be requested via the manager.
         if (!$this->manager()->wantsAuthentication()) {
-            return $this->routeResponse(AuthManager::NO_AUTH_REQUEST);
+            return $this->routeResponse(
+                $request, AuthManager::NO_AUTH_REQUEST
+            );
         }
 
         $enrolmentCount = $request->user()->enrolments()->enrolled()->count();
 
         // Send an error if there are no enrolments for the current user.
         if (0 === $enrolmentCount) { 
-            return $this->routeResponse(AuthBroker::ENROLMENT_NOT_FOUND); 
+            return $this->routeResponse(
+                $request, AuthBroker::ENROLMENT_NOT_FOUND
+            ); 
         }
 
         // If the user only has one enrolled authentication method, 
         // we direct them straight to the verification process.
         if (1 === $enrolmentCount) {
             return $this->challengeAndRedirect(
+                $request,
                 $request->user(),
                 $request->user()->getDefaultTwoFactorAuthMethod(),
                 $request->all()
@@ -55,7 +60,7 @@ trait ChallengesUsers
     /**
      * Handle the authentication method form request.
      * 
-     * @param  Request $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function challenge(Request $request)
@@ -65,6 +70,7 @@ trait ChallengesUsers
         ]);
 
         return $this->challengeAndRedirect(
+            $request,
             $request->user(),
             $request->get('method'),
             $request->all()
@@ -75,11 +81,11 @@ trait ChallengesUsers
      * The user has been challenged via the chosen 
      * authentication method and needs to verify the token.
      * 
-     * @param  Challengeable $user      
-     * @param  Challenge     $challenge 
+     * @param  \Illuminate\Http\Request $request   
+     * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challenge $challenge 
      * @return \Illuminate\Http\Response            
      */
-    public function challenged(Challengeable $user, Challenge $challenge)
+    public function challenged(Request $request, Challenge $challenge)
     {
         //
     }
@@ -87,7 +93,7 @@ trait ChallengesUsers
     /**
      * Show the authentication methods verification form.
      * 
-     * @param  Request $request
+     * @param  \Illuminate\Http\Request $request
      * @param  string  $method
      * @return \Illuminate\Contracts\View\View
      */
@@ -95,7 +101,9 @@ trait ChallengesUsers
     {
         // Authentications must be requested via the manager.
         if (!$this->manager()->wantsAuthentication()) {
-            return $this->routeResponse(AuthManager::NO_AUTH_REQUEST);
+            return $this->routeResponse(
+                $request, AuthManager::NO_AUTH_REQUEST, $method
+            );
         }
 
         // First, we check that the requested authentication method
@@ -114,13 +122,15 @@ trait ChallengesUsers
             ]);
         }
 
-        return $this->routeResponse(AuthBroker::USER_NOT_ENROLLED, $method);
+        $response = AuthBroker::USER_NOT_ENROLLED;
+
+        return $this->routeResponse($request, $response, $method);
     }
 
     /**
      * Handle the response from the verification form.
      * 
-     * @param  Request $request 
+     * @param  \Illuminate\Http\Request $request 
      * @param  string $method  
      * @return \Illuminate\Http\Response     
      */
@@ -132,18 +142,18 @@ trait ChallengesUsers
             $request->all()
         );
 
-        return $this->routeResponse($response, $method);
+        return $this->routeResponse($request, $response, $method);
     }
 
     /**
      * The code was verified by the method instance, the user 
      * should be redirected to the intended destination.
      * 
-     * @param  Challengeable $user 
+     * @param  \Illuminate\Http\Request $requst 
      * @param  Challenge     $challenge 
      * @return \Illuminate\Http\Response             
      */
-    protected function verified(Challengeable $user, Challenge $challenge)
+    protected function verified(Request $requst, Challenge $challenge)
     {
         //
     }
@@ -151,13 +161,15 @@ trait ChallengesUsers
     /**
      * Dispatch a challenge request to the user and redirect 
      * the user to the verification path.
-     * 
-     * @param  Challengeable $user    
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \BoxedCode\Laravel\TwoFactor\Contracts\Challengeable $user    
      * @param  string        $method  
      * @param  array         $data    
      * @return \Illuminate\Http\Response         
      */
-    protected function challengeAndRedirect(Challengeable $user, 
+    protected function challengeAndRedirect(Request $request,
+                                            Challengeable $user, 
                                             $method, 
                                             array $data = []
     ) {
@@ -170,6 +182,6 @@ trait ChallengesUsers
             $data
         );
 
-        return $this->routeResponse($response, $method);
+        return $this->routeResponse($request, $response, $method);
     }
 }

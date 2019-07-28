@@ -31,18 +31,18 @@ trait EnrolsUsers
             $method
         );
 
-        return $this->routeResponse($response, $method);
+        return $this->routeResponse($request, $response, $method);
     }
 
     /**
      * The enrolment method requires additional setup, the user 
      * should be redirected to the methods setup form.
      * 
-     * @param  Challengeable $user      
+     * @param  Request $request      
      * @param  Enrolment     $enrolment
      * @return \Illuminate\Http\Response                 
      */
-    protected function requiresSetup(Challengeable $user, Enrolment $enrolment)
+    protected function requiresSetup(Request $request, Enrolment $enrolment)
     {
         //
     }
@@ -64,7 +64,7 @@ trait EnrolsUsers
         // If the beforeSetup routine was not successful, we route the 
         // brokers response via the response handler, this determines the next action.
         if (AuthBroker::BEFORE_SETUP_COMPLETE !== (string) $response) {
-            return $this->routeResponse($response);
+            return $this->routeResponse($request, $response);
         }
 
         return $this->view('setup', $method, [
@@ -88,18 +88,18 @@ trait EnrolsUsers
             $request->all()
         );
 
-        return $this->routeResponse($response, $method);
+        return $this->routeResponse($request, $response, $method);
     }
 
     /**
      * The user has been successfully enrolled into the requested 
      * authentication method and should be shown the enrolment success view. 
      *      
-     * @param  Challengeable $user      
+     * @param  Request $request      
      * @param  Enrolment     $enrolment 
      * @return \Illuminate\Http\Request          
      */
-    protected function enrolled(Challengeable $user, Enrolment $enrolment)
+    protected function enrolled(Request $request, Enrolment $enrolment)
     {
         //
     }
@@ -135,18 +135,18 @@ trait EnrolsUsers
             $method
         );
 
-        return $this->routeResponse($response, $method);
+        return $this->routeResponse($request, $response, $method);
     }
     
     /**
      * The user has been disenrolled for the requested authentication 
      * method an should be shown the disenrolment success view.
      * 
-     * @param  Challengeable $user      
+     * @param  Request $request      
      * @param  Enrolment     $enrolment 
      * @return \Illuminate\Http\Request  
      */
-    protected function disenrolled(Challengeable $user, Enrolment $enrolment)
+    protected function disenrolled(Request $request, Enrolment $enrolment)
     {
         //
     }
