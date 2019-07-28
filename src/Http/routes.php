@@ -2,7 +2,7 @@
 
 Route::get('/tfa', 'Auth\TwoFactorAuthController@showMethodSelectionForm')->name('tfa');
 Route::get('/tfa/error', 'Auth\TwoFactorAuthController@showError')->name('tfa.error');
-Route::post('/tfa/challenge', 'Auth\TwoFactorAuthController@challenge')->name('tfa.challenge')->middleware('throttle:5,1,tfa.challenge');
+Route::post('/tfa/challenge', 'Auth\TwoFactorAuthController@challenge')->name('tfa.challenge')->middleware('throttle:10,1,tfa.challenge');
 Route::get('/tfa/{method}/verify', 'Auth\TwoFactorAuthController@showVerificationForm')->name('tfa.verify.form');
 Route::post('/tfa/{method}/verify', 'Auth\TwoFactorAuthController@verify')->middleware('throttle:10,1,tfa.verify');
 Route::get('/tfa/{method}/enrol', 'Auth\TwoFactorAuthController@begin')->name('tfa.enrol')->middleware('throttle:10,1,tfa.enrol');
