@@ -67,7 +67,8 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                ->line($this->getNotificationPlainText());
+            ->subject('New Authentication Request')
+            ->line($this->getNotificationPlainText());
     }
 
     /**
