@@ -60,7 +60,7 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
      * Enrolment method scope.
      * 
      * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  sting $method [description]
+     * @param  string $method
      * @return void
      */
     public function scopeMethod($query, $method)
