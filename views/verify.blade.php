@@ -12,7 +12,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">2FA Verification</h5>
-                            <h6 class="card-subtitle mb-3 text-muted">Enter the code you have been provided</h6>
+                            <h6 class="card-subtitle mb-3 text-muted">Enter the code you have recieved via {{ $method_display_label }} below</h6>
 
                             @if (!empty($errors))
                                 <div class="mb-3 text-danger">
