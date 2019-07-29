@@ -32,10 +32,10 @@ class RequireAuthentication
      * @var array
      */
     protected $except = [
-        '/challenge',
-        '/challenge/error',
-        '/challenge/dispatch',
-        '/challenge/*/verify',
+        '/tfa',
+        '/tfa/error',
+        '/tfa/dispatch',
+        '/tfa/*/verify',
     ];
 
     /**
