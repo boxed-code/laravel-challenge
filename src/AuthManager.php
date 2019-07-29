@@ -164,6 +164,28 @@ class AuthManager implements ManagerContract
     }
 
     /**
+     * Get the model associate with an authentication guard.
+     * 
+     * @param  string|null $guard
+     * @return string
+     */
+    public function getModelForGuard($guard = null)
+    {
+        if (empty($guard)) {
+            $guard = config('auth.defaults.guard');
+        }
+
+        return collect(config('auth.guards'))
+            ->map(function ($guard) {
+                if (! isset($guard['provider'])) {
+                    return;
+                }
+
+                return config("auth.providers.{$guard['provider']}.model");
+            })->get($guard);
+    }
+
+    /**
      * Get the length of time before another challenge/verification 
      * sequence is required.
      * 

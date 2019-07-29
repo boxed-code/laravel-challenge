@@ -2,6 +2,8 @@
 
 namespace BoxedCode\Laravel\Auth\Challenge;
 
+use BoxedCode\Laravel\Auth\Challenge\Console\Commands\DisenrolUser;
+use BoxedCode\Laravel\Auth\Challenge\Console\Commands\EnrolUser;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthBroker as BrokerContract;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager as ManagerContract;
 use Illuminate\Routing\Router;
@@ -66,6 +68,14 @@ class ChallengeServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Register the commands.
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                EnrolUser::class,
+                DisenrolUser::class,
+            ]);
+        }
+
         // Register the packages route macros.
         $this->registerRouteMacro();
 

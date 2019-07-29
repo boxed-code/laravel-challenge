@@ -36,6 +36,16 @@ class AuthBroker implements BrokerContract
     protected $events;
 
     /**
+     * Determines whether challenges should actually 
+     * be dispatched and verified by the method instances. 
+     * For instance, we do not want to dispatch challenges 
+     * while we're force enrolling users.
+     * 
+     * @var boolean
+     */
+    protected $dispatchChallenges = true;
+
+    /**
      * Create a new broker instance.
      * 
      * @param MethodManager $methods
@@ -46,6 +56,18 @@ class AuthBroker implements BrokerContract
         $this->methods = $methods;
 
         $this->config = $config;
+    }
+
+    /**
+     * Prevent the broke from dispatching / verifying challenges.
+     * 
+     * @return static
+     */
+    public function withoutDispatchingChallenges()
+    {
+        $this->dispatchChallenges = false;
+
+        return $this;
     }
 
     /**
@@ -280,7 +302,7 @@ class AuthBroker implements BrokerContract
             return $this->respond(static::USER_NOT_ENROLLED);
         }
 
-        $state = $method->challenge($user, $data);
+        $state = $this->dispatchChallenges ? $method->challenge($user, $data) : [];
 
         // Create the challenge, call the method 
         // instance and fire the challenged event.
@@ -317,7 +339,9 @@ class AuthBroker implements BrokerContract
         try {
             // Call the method instance to verify the data passed, if 
             // the instance fails it will throw a ChallengeVerificationException.
-            $state = $this->method($method)->verify($user, $challenge->state, $data);
+            $state = $this->dispatchChallenges ? 
+                $this->method($method)->verify($user, $challenge->state, $data) : 
+                [];
 
             $challenge->fill([
                 'verified_at' => now(),

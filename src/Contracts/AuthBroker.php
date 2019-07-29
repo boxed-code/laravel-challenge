@@ -109,6 +109,13 @@ interface AuthBroker
     const CHALLENGE_NOT_FOUND = 'challenge_not_found';
 
     /**
+     * Prevent the broke from dispatching challenges.
+     * 
+     * @return static
+     */
+    public function withoutDispatchingChallenges();
+
+    /**
      * Prepare for enrolment setup.
      *
      * This is used to create any data that needs to be provided 

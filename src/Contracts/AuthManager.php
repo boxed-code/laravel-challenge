@@ -81,6 +81,14 @@ interface AuthManager
     public function shouldEnforceFor(Challengeable $user);
 
     /**
+     * Get the model associate with an authentication guard.
+     * 
+     * @param  string|null $guard
+     * @return string
+     */
+    public function getModelForGuard($guard = null);
+
+    /**
      * Get the session store instance.
      * 
      * @return \Illuminate\Contracts\Session\Session

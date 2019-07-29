@@ -43,30 +43,8 @@ trait Helpers
     public function user(): BelongsTo
     {
         return $this->belongsTo(
-            $this->getModelForGuard(),
+            app('auth.challenge')->getModelForGuard(),
             'user_id'
         );
-    }
-
-    /**
-     * Get the model associate with an authentication guard.
-     * 
-     * @param  string|null $guard
-     * @return string
-     */
-    protected function getModelForGuard($guard = null)
-    {
-        if (empty($guard)) {
-            $guard = config('auth.defaults.guard');
-        }
-
-        return collect(config('auth.guards'))
-            ->map(function ($guard) {
-                if (! isset($guard['provider'])) {
-                    return;
-                }
-
-                return config("auth.providers.{$guard['provider']}.model");
-            })->get($guard);
     }
 }
