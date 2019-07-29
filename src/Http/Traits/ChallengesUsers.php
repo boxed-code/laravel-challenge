@@ -53,6 +53,7 @@ trait ChallengesUsers
         // Otherwise, we show them the method selection screen.
         return $this->view('method', null, [
             'methods' => $methods, 
+            'verification_purpose' => $this->manager()->wantsAuthenticationFor(),
             'form_action_url' => route('challenge.dispatch')
         ]);
     }
@@ -119,6 +120,7 @@ trait ChallengesUsers
         if ($canChallenge) { 
             return $this->view('verify', $method, [
                 'method_display_label' => $this->broker()->method($method)->getDisplayLabel(),
+                'verification_purpose' => $purpose,
                 'form_action_url' => route('challenge.verify.form', [$method])
             ]);
         }

@@ -22,7 +22,11 @@
                             @csrf
                             <div class="mt-3">
                                 <button class="btn btn-primary" type="submit">Continue</button>
+                                @if (in_array($verification_purpose, ['auth', 'device_auth']))
                                 or <a href="{{ route('logout') }}">Cancel and logout</a>
+                                @else
+                                or <a href="javascript:history.go(-1)">Go back</a>
+                                @endif
                             </div>
                         </div>
                     </div>
