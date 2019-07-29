@@ -7,6 +7,13 @@ use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
 interface Method
 {
     /**
+     * Get the methods display label.
+     * 
+     * @return string
+     */
+    public function getDisplayLabel();
+
+    /**
      * Gets whether the method should require a 
      * successful challenge before enrolling the user.
      * 

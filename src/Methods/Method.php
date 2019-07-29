@@ -36,6 +36,16 @@ abstract class Method
     }
 
     /**
+     * Get the methods display label.
+     * 
+     * @return string
+     */
+    public function getDisplayLabel()
+    {
+        return $this->config['label'];
+    }
+
+    /**
      * Gets whether the method should require a 
      * successful challenge before enrolling the user.
      * 

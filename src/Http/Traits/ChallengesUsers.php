@@ -118,6 +118,7 @@ trait ChallengesUsers
         
         if ($canChallenge) { 
             return $this->view('verify', $method, [
+                'method_display_label' => $this->broker()->method($method)->getDisplayLabel(),
                 'form_action_url' => route('challenge.verify.form', [$method])
             ]);
         }
