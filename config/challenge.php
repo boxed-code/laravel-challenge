@@ -16,7 +16,7 @@ return [
     |
     */
    
-    'enforce' => 'enrolled',
+    'enforce' => env('CHALLENGE_ENFORCING', 'enrolled'),
 
     /*
     |--------------------------------------------------------------------------
@@ -48,19 +48,19 @@ return [
          | the value below. By default it is set to zero, this means that the 
          | verification will last for the duration of the session.
          */
-        'verification' => env('challenge_VERIFICATION_LIFETIME', 0),
+        'verification' => env('CHALLENGE_VERIFICATION_LIFETIME', 0),
 
         /*
          | All challenges issued are only valid for a specific length of time, you 
          | can set this here,by default this is set to one hour.
          */
-        'challenge' => env('challenge_CHALLENGE_LIFETIME', 60 * 60),
+        'challenge' => env('CHALLENGE_REQUEST_LIFETIME', 60 * 60),
 
         /*
          | As with challenges, all incomplete enrolments are only valid for specific 
          | length of time, by default this is also set to one hour.
          */
-        'enrolment' => env('challenge_ENROLMENT_LIFETIME', 60 * 60),
+        'enrolment' => env('CHALLENGE_ENROLMENT_LIFETIME', 60 * 60),
 
     ],
 
