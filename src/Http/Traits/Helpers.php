@@ -42,6 +42,11 @@ trait Helpers
         return app('auth.challenge.broker');
     }
 
+    /**
+     * Get the authentication manager instance.
+     * 
+     * @return \BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager
+     */
     protected function manager()
     {
         return app('auth.challenge');
