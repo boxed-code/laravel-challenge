@@ -5,6 +5,7 @@ namespace BoxedCode\Laravel\Auth\Challenge\Http\Traits;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthBroker;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager;
 use BoxedCode\Laravel\Auth\Challenge\Exceptions\ChallengeLogicException;
+use Illuminate\Http\Request;
 
 trait RoutesBrokerResponses
 {
@@ -20,14 +21,17 @@ trait RoutesBrokerResponses
 
     /**
      * Show the TFA error view.
-     * 
+     *
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Contracts\View\View
      */
-    public function showError()
+    public function showError(Request $request)
     {
         $this->manager()->revokeAuthenticationRequest();
 
-        return $this->view('error');
+        return $this->view('error', null, [
+            'response' => $request->session()->get('response')
+        ]);
     }
     
     /**
@@ -41,6 +45,7 @@ trait RoutesBrokerResponses
     protected function sendErrorResponse($message, $response = null)
     {
         return redirect()->route('challenge.error')
+            ->with('response', $response)
             ->withErrors([
                 $message
             ]);
