@@ -16,4 +16,7 @@ Simple, multi-method two factor authentication for laravel.
 - Modify your User model class to implement `\BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable` and either optionally use the `BoxedCode\Laravel\Auth\Challenge\Challengeable` trait or implement the the methods defined in the contract yourself.
 - Add the middleware `\BoxedCode\Laravel\Auth\Challenge\Http\Middleware\RequireAuthentication` to the routes you would like to protect.
 - Run migrations `./artisan migrate`
-- Enrol yourself via the `./artisan enrol {user_id} email
+- Enrol yourself via the `./artisan enrol {user_id} email`
+
+## License
+MIT
