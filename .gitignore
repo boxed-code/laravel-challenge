@@ -1,3 +1,4 @@
 composer.lock
 vendor
 .todo
+.phpunit.result.cache
