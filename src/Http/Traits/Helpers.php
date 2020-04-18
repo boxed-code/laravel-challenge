@@ -2,19 +2,16 @@
 
 namespace BoxedCode\Laravel\Auth\Challenge\Http\Traits;
 
-use BoxedCode\Laravel\Auth\Challenge\AuthBroker;
-use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
-use Illuminate\Http\Request;
-
 trait Helpers
 {
     /**
-     * Find a custom view for the requested method 
+     * Find a custom view for the requested method
      * and view name or return the default.
-     * 
-     * @param  string $name 
-     * @param  string|null $method
-     * @param  array $data
+     *
+     * @param string      $name
+     * @param string|null $method
+     * @param array       $data
+     *
      * @return \Illuminate\Contracts\View\View
      */
     protected function view($name, $method = null, array $data = [])
@@ -34,7 +31,7 @@ trait Helpers
 
     /**
      * Get the authentication broker instance.
-     * 
+     *
      * @return \BoxedCode\Laravel\Auth\Challenge\Contracts\AuthBroker
      */
     protected function broker()
@@ -44,7 +41,7 @@ trait Helpers
 
     /**
      * Get the authentication manager instance.
-     * 
+     *
      * @return \BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager
      */
     protected function manager()

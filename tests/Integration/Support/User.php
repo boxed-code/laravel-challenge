@@ -11,6 +11,6 @@ class User extends BaseUser implements ChallengeableContract
     use Challengeable;
 
     protected $table = 'users';
-    
+
     protected $fillable = ['name', 'email', 'password'];
 }

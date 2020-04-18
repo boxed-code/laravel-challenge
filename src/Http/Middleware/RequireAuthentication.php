@@ -10,14 +10,14 @@ class RequireAuthentication
 {
     /**
      * The session manager instance.
-     * 
+     *
      * @var AuthManager
      */
     protected $manager;
 
     /**
      * Create a new middleware instance.
-     * 
+     *
      * @param AuthManager $manager
      */
     public function __construct(AuthManager $manager)
@@ -26,7 +26,7 @@ class RequireAuthentication
     }
 
     /**
-     * The paths that should be excluded from 
+     * The paths that should be excluded from
      * two factor authentication.
      *
      * @var array
@@ -41,10 +41,11 @@ class RequireAuthentication
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
-     * @param  string|null  $purpose
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     * @param string|null              $guard
+     * @param string|null              $purpose
+     *
      * @return mixed
      */
     public function handle($request, Closure $next, $purpose = null, $lifetime = null)
@@ -55,7 +56,7 @@ class RequireAuthentication
             session()->put('url.intended', $request->fullUrl());
 
             if ($request->expectsJson()) {
-                throw new AuthenticationException;
+                throw new AuthenticationException();
             }
 
             return $this->manager->requestAuthentication(
@@ -68,8 +69,9 @@ class RequireAuthentication
 
     /**
      * Expand a '|' delimited purpose string to an array.
-     * 
-     * @param  string|null $purpose
+     *
+     * @param string|null $purpose
+     *
      * @return array|null
      */
     protected function expandPurposeString($purpose)
@@ -81,15 +83,16 @@ class RequireAuthentication
 
     /**
      * Ascertain whether we should redirect for authentication.
-     * 
-     * @param  \Illuminate\Http\Request $request
-     * @param  string|array|null $purposes
-     * @param  integer|null
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param string|array|null        $purposes
+     * @param  int|null
+     *
      * @return bool
      */
     protected function shouldAuthenticate($request, $purposes, $lifetime)
     {
-        return 
+        return
             !$this->inExceptArray($request) &&
             $this->manager->shouldEnforceFor($request->user()) &&
             !$this->manager->isAuthenticated($request->user(), null, $purposes, $lifetime);
@@ -98,7 +101,8 @@ class RequireAuthentication
     /**
      * Determine if the request has a URI that should pass through CSRF verification.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return bool
      */
     protected function inExceptArray($request)

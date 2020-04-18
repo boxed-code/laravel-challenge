@@ -9,10 +9,11 @@ use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    use ProvidesAuthentication, AuthenticatesUsers;
-    
+    use ProvidesAuthentication;
+    use AuthenticatesUsers;
+
     public function home(Request $request)
     {
-        return 'Hello ' . $request->user()->name . '!';
+        return 'Hello '.$request->user()->name.'!';
     }
 }

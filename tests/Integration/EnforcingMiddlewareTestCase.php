@@ -28,14 +28,14 @@ class EnforcingMiddlewareTestCase extends TestCase
 
         // Add & enable the test method.
         $app['config']->set('challenge.methods.test', [
-            'label' => 'Test MFA Method',
+            'label'  => 'Test MFA Method',
             'method' => 'test',
         ]);
 
         $app['config']->set('challenge.enabled', ['test', 'email']);
 
         // Add the custom creator.
-        $app['auth.challenge.methods']->extend('test', function($name, $config) {
+        $app['auth.challenge.methods']->extend('test', function ($name, $config) {
             return new Support\TestMethod($name, $config);
         });
 
@@ -65,12 +65,12 @@ class EnforcingMiddlewareTestCase extends TestCase
         $response = $this->actingAs($this->testUser)->get('/tfa');
         $response->assertSeeTextInOrder([
             'E-mail',
-            'Test MFA Method'
+            'Test MFA Method',
         ]);
 
         // POST the selection page response.
         $response = $this->actingAs($this->testUser)->post('/tfa/dispatch', [
-            'method' => 'test'
+            'method' => 'test',
         ]);
         $response->assertRedirect('http://localhost/tfa/test/verify');
 
@@ -80,7 +80,7 @@ class EnforcingMiddlewareTestCase extends TestCase
 
         // POST the verification response.
         $response = $this->actingAs($this->testUser)->post('/tfa/test/verify', [
-            'code' => $this->testUser->challenges()->first()->state['code']
+            'code' => $this->testUser->challenges()->first()->state['code'],
         ]);
         $response->assertRedirect('http://localhost');
 

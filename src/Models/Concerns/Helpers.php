@@ -8,7 +8,7 @@ trait Helpers
 {
     /**
      * Decrypt and get the state attribute.
-     * 
+     *
      * @return array
      */
     public function getStateAttribute()
@@ -22,13 +22,14 @@ trait Helpers
 
     /**
      * Encrypt and set the state attribute.
-     * 
+     *
      * @param array $value
      */
     public function setStateAttribute($value)
     {
         if (!empty($value)) {
             $this->attributes['state'] = encrypt($value);
+
             return;
         }
 
@@ -37,7 +38,7 @@ trait Helpers
 
     /**
      * Get the user the model belongs to.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo

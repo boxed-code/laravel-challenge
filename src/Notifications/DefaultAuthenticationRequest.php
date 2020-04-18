@@ -13,14 +13,14 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
 
     /**
      * The authentication token.
-     * 
+     *
      * @var string
      */
     protected $token;
 
     /**
      * The channels to dispatch this notification via.
-     * 
+     *
      * @var array
      */
     protected $channels;
@@ -40,7 +40,8 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -55,18 +56,19 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
      */
     protected function getNotificationPlainText()
     {
-        return 'Your authentication code is ' . $this->token;
+        return 'Your authentication code is '.$this->token;
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('New Authentication Request')
             ->line($this->getNotificationPlainText());
     }
@@ -74,13 +76,14 @@ class DefaultAuthenticationRequest extends Notification implements ShouldQueue
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
     {
         return [
-            'message' => $this->getNotificationPlainText()
+            'message' => $this->getNotificationPlainText(),
         ];
     }
 }

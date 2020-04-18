@@ -9,14 +9,14 @@ class LogoutListener
 {
     /**
      * The auth manager instance.
-     * 
+     *
      * @var \BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager
      */
     protected $manager;
 
     /**
      * Create a new logout listener instance.
-     * 
+     *
      * @param \BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager $manager
      */
     public function __construct(AuthManager $manager)
@@ -26,8 +26,9 @@ class LogoutListener
 
     /**
      * Handle the logout event.
-     * 
-     * @param  \Illuminate\Auth\Events\Logout $event
+     *
+     * @param \Illuminate\Auth\Events\Logout $event
+     *
      * @return void
      */
     public function handle(Logout $event)

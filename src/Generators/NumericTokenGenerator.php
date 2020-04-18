@@ -8,14 +8,14 @@ class NumericTokenGenerator implements TokenGenerator
 {
     /**
      * Configuration.
-     * 
+     *
      * @var array
      */
     protected $config;
 
     /**
      * Create a new generator instance.
-     * 
+     *
      * @param array $config
      */
     public function __construct(array $config = [])
@@ -25,13 +25,13 @@ class NumericTokenGenerator implements TokenGenerator
 
     /**
      * Generate a token.
-     * 
+     *
      * @return string
      */
     public function generate()
     {
         return random_int(
-            $this->config['min'] ?? 10000, 
+            $this->config['min'] ?? 10000,
             $this->config['max'] ?? 99999
         );
     }
