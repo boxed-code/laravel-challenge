@@ -23,9 +23,25 @@ class ChallengeServiceProvider extends ServiceProvider
             'challenge'
         );
 
+        $this->registerMethodManager();
+
         $this->registerAuthBroker();
 
         $this->registerAuthManager();
+    }
+
+    /**
+     * Register the method manager.
+     * 
+     * @return void
+     */
+    protected function registerMethodManager()
+    {
+        $this->app->singleton(Methods\MethodManager::class, function($app) {
+            return new Methods\MethodManager($app);
+        });
+
+        $this->app->alias(Methods\MethodManager::class, 'auth.challenge.methods');
     }
 
     /**
@@ -36,11 +52,9 @@ class ChallengeServiceProvider extends ServiceProvider
     protected function registerAuthBroker()
     {
         $this->app->bind(BrokerContract::class, function($app) {
-            $manager = new Methods\MethodManager($app);
-
             $config = config('challenge', []);
 
-            return (new AuthBroker($manager, $config))
+            return (new AuthBroker($app['auth.challenge.methods'], $config))
                 ->setEventDispatcher($app['events']);
         });
 

@@ -4,6 +4,7 @@ namespace BoxedCode\Laravel\Auth\Challenge\Methods;
 
 use InvalidArgumentException;
 use Illuminate\Support\Str;
+use Closure;
 
 class MethodManager
 {
@@ -140,6 +141,32 @@ class MethodManager
     protected function createGoogleAuthenticatorMethod($name, $config)
     {
         return new GoogleAuthenticatorMethod($name, $config);
+    }
+
+    /**
+     * Call a custom driver creator.
+     *
+     * @param  string $method
+     * @param  array $config
+     * @return mixed
+     */
+    protected function callCustomCreator($name, $config)
+    {
+        return $this->customCreators[$name]($name, $config);
+    }
+
+    /**
+     * Register a custom driver creator Closure.
+     *
+     * @param  string    $driver
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function extend($driver, Closure $callback)
+    {
+        $this->customCreators[$driver] = $callback;
+
+        return $this;
     }
 
     /**
