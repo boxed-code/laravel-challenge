@@ -95,10 +95,7 @@ class ChallengeServiceProvider extends ServiceProvider
         );
 
         // Register the migrations to publish.
-        $this->publishes(
-            [$this->packagePath('migrations') => database_path('migrations')], 
-            'migrations'
-        );
+        $this->loadMigrationsFrom($this->packagePath('migrations'));
     }
 
     /**
