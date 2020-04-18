@@ -46,7 +46,8 @@ trait Challengeable
     public function challenges(): HasMany
     {
         return $this->hasMany(
-            config('challenge.models.challenge')
+            config('challenge.models.challenge'),
+            'user_id'
         );
     }
 
@@ -58,7 +59,8 @@ trait Challengeable
     public function enrolments(): HasMany
     {
         return $this->hasMany(
-            config('challenge.models.enrolment')
+            config('challenge.models.enrolment'),
+            'user_id'
         );
     }
 }
