@@ -1,5 +1,5 @@
 # Challengeable
-![Build Status](https://travis-ci.com/boxed-code/laravel-challenge.svg?branch=master)
+![Build Status](https://travis-ci.com/boxed-code/laravel-challenge.svg?branch=4.x)
 [![Latest Stable Version](https://poser.pugx.org/boxed-code/laravel-challenge/v/stable)](https://packagist.org/packages/boxed-code/laravel-challenge)
 [![License](https://poser.pugx.org/boxed-code/laravel-challenge/license)](https://packagist.org/packages/boxed-code/laravel-challenge)
 
