@@ -1,5 +1,9 @@
 # Challengeable
-A package to simplify two factor / multi-factor authentication for laravel.
+![Build Status](https://travis-ci.com/boxed-code/laravel-challenge.svg?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/boxed-code/laravel-challenge/v/stable)](https://packagist.org/packages/boxed-code/laravel-challenge)
+[![License](https://poser.pugx.org/boxed-code/laravel-challenge/license)](https://packagist.org/packages/boxed-code/laravel-challenge)
+
+Simple, multi-method two factor authentication for laravel.
 
 ## Version Compatibility
 
@@ -8,6 +12,8 @@ A package to simplify two factor / multi-factor authentication for laravel.
  5.7.x    | dev-master
 
 ## Getting Started
-- `composer require boxed-code/laravel-challenge`
-- Modify your user class to implement `\BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable` and either optionally use the `BoxedCode\Laravel\Auth\Challenge\Challengeable` trait or implement the the methods defined in the contract yourself.
+- Install using `composer require boxed-code/laravel-challenge`
+- Modify your User model class to implement `\BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable` and either optionally use the `BoxedCode\Laravel\Auth\Challenge\Challengeable` trait or implement the the methods defined in the contract yourself.
+- Add the middleware `\BoxedCode\Laravel\Auth\Challenge\Http\Middleware\RequireAuthentication` to the routes you would like to protect.
 - Run migrations `./artisan migrate`
+- Enrol yourself via the `./artisan enrol {user_id} email
