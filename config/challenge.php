@@ -112,6 +112,32 @@ return [
             'key_size' => 32,
             //'qr_generator' => 'bacon-v1',
         ]
-    ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Automatic Route Binding
+    |--------------------------------------------------------------------------
+    |
+    | By default, the package automatically binds the required routes to a 
+    | default HTTP controller. You can switch off automatic registration or 
+    | change the controller name using the options below.
+    */
+   
+   'routing' => [
+
+        /**
+         * Automatically register the default routes to the controller specified below?
+         * (Routes can also be bound be calling Route::challenge())
+         */
+        'register' => true,
+
+        /**
+         * Where should we direct the default authentication routes?
+         */
+        'controller' => \BoxedCode\Laravel\Auth\Challenge\Http\AuthController::class,
+
+   ]
+    
     
 ];

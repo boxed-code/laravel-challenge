@@ -76,8 +76,8 @@ class ChallengeServiceProvider extends ServiceProvider
             ]);
         }
 
-        // Register the packages route macros.
-        $this->registerRouteMacro();
+        // Setup the packages routing.
+        $this->setupRouting();
 
         // Register the event listeners.
         $this->app['events']->listen(
@@ -99,11 +99,11 @@ class ChallengeServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the router macro.
+     * Setup the packages routing.
      * 
      * @return void
      */
-    protected function registerRouteMacro()
+    protected function setupRouting()
     {
         $registerRoutes = function() { 
             $this->loadRoutesFrom(
@@ -114,6 +114,12 @@ class ChallengeServiceProvider extends ServiceProvider
         Router::macro('challenge', function() use ($registerRoutes) {
             $registerRoutes();
         });
+
+
+        // Register the routes automatically if required.
+        if ($this->app['config']->get('challenge.routing.register') === true) {
+            $registerRoutes();
+        }
     }
 
     /**
