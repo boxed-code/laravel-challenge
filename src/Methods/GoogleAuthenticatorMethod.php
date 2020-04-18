@@ -5,16 +5,15 @@ namespace BoxedCode\Laravel\Auth\Challenge\Methods;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\Method as MethodContract;
 use BoxedCode\Laravel\Auth\Challenge\Exceptions\ChallengeVerificationException;
-use BoxedCode\Laravel\Auth\Challenge\Methods\Method;
-use PragmaRX\Google2FA\Google2FA;
 use InvalidArgumentException;
+use PragmaRX\Google2FA\Google2FA;
 
 class GoogleAuthenticatorMethod extends Method implements MethodContract
 {
     /**
-     * Gets whether the method should require a 
+     * Gets whether the method should require a
      * successful challenge before enrolling the user.
-     * 
+     *
      * @return bool
      */
     public function requiresEnrolmentChallenge()
@@ -23,9 +22,9 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
     }
 
     /**
-     * Gets whether the method needs to be 
+     * Gets whether the method needs to be
      * setup during enrolment.
-     * 
+     *
      * @return bool
      */
     public function requiresEnrolmentSetup()
@@ -34,10 +33,11 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
     }
 
     /**
-     * Perform any pre-setup processing and return any data required by 
+     * Perform any pre-setup processing and return any data required by
      * the user before setup.
-     * 
-     * @param  Challengeable $user
+     *
+     * @param Challengeable $user
+     *
      * @return array
      */
     public function beforeSetup(Challengeable $user): array
@@ -60,17 +60,19 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
     }
 
     /**
-     * Verify the challenge by validating supplied $data and challenge $state, 
-     * if it is not valid throw a ChallengeVerificationException. 
-     * 
-     * If it is valid, return any additional state data that will be merged and 
+     * Verify the challenge by validating supplied $data and challenge $state,
+     * if it is not valid throw a ChallengeVerificationException.
+     *
+     * If it is valid, return any additional state data that will be merged and
      * persisted with the challenges existing state.
-     * 
-     * @param  Challengeable $user  
-     * @param  array         $state 
-     * @param  array         $data  
-     * @return array               
+     *
+     * @param Challengeable $user
+     * @param array         $state
+     * @param array         $data
+     *
      * @throws ChallengeVerificationException
+     *
+     * @return array
      */
     public function verify(Challengeable $user, array $state = [], array $data = []): array
     {
@@ -88,32 +90,33 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
             return [];
         }
 
-        throw new ChallengeVerificationException;
+        throw new ChallengeVerificationException();
     }
 
     /**
      * Generate an inline QR code image.
-     * 
-     * @param  sting $uri
+     *
+     * @param sting $uri
+     *
+     * @throws InvalidArgumentException
+     *
      * @return string
-     * @throws  InvalidArgumentException
      */
     protected function generateQrCode($uri)
     {
         $generator = $this->config['qr_generator'] ?? 'qrserver';
 
-        switch ($generator) 
-        {
+        switch ($generator) {
             case 'bacon-v1':
             case 'simple-qr':
-                return 'data:image/png;base64,' . base64_encode((new \BaconQrCode\Writer(
+                return 'data:image/png;base64,'.base64_encode((new \BaconQrCode\Writer(
                     (new \BaconQrCode\Renderer\Image\Png())
                         ->setWidth(256)
                         ->setHeight(256)
                 ))->writeString($uri));
 
             case 'bacon-v2':
-                return 'data:image/png;base64,' . base64_encode((new \BaconQrCode\Writer(
+                return 'data:image/png;base64,'.base64_encode((new \BaconQrCode\Writer(
                     new \BaconQrCode\Renderer\ImageRenderer(
                         new \BaconQrCode\Renderer\RendererStyle\RendererStyle(400),
                         new BaconQrCode\Renderer\Image\ImagickImageBackEnd()
@@ -121,15 +124,15 @@ class GoogleAuthenticatorMethod extends Method implements MethodContract
                 ))->writeString($uri));
 
             case 'qrserver':
-                return 'data:image/png;base64,' . base64_encode(
+                return 'data:image/png;base64,'.base64_encode(
                     file_get_contents(
-                        "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . 
+                        'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data='.
                             urlencode($uri)
                     )
                 );
-                
+
         }
-        
+
         throw new InvalidArgumentException(
             sprintf('Invalid QR code generator name supplied. [%s]', $generator)
         );

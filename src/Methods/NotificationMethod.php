@@ -5,15 +5,14 @@ namespace BoxedCode\Laravel\Auth\Challenge\Methods;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\Method as MethodContract;
 use BoxedCode\Laravel\Auth\Challenge\Exceptions\ChallengeVerificationException;
-use BoxedCode\Laravel\Auth\Challenge\Methods\Method;
 use BoxedCode\Laravel\Auth\Challenge\Notifications\DefaultAuthenticationRequest;
 
 class NotificationMethod extends Method implements MethodContract
 {
     /**
-     * Gets whether the method should require a 
+     * Gets whether the method should require a
      * successful challenge before enrolling the user.
-     * 
+     *
      * @return bool
      */
     public function requiresEnrolmentChallenge()
@@ -22,13 +21,14 @@ class NotificationMethod extends Method implements MethodContract
     }
 
     /**
-     * Dispatch a challenge via the method to the supplied user and return any 
-     * additional state data that will be merged and persisted with the 
+     * Dispatch a challenge via the method to the supplied user and return any
+     * additional state data that will be merged and persisted with the
      * challenges existing state.
-     * 
-     * @param  Challengeable $user 
-     * @param  array         $data 
-     * @return array              
+     *
+     * @param Challengeable $user
+     * @param array         $data
+     *
+     * @return array
      */
     public function challenge(Challengeable $user, array $data = []): array
     {
@@ -40,16 +40,17 @@ class NotificationMethod extends Method implements MethodContract
     }
 
     /**
-     * Verify the challenge by validating supplied $data and challenge $state, 
-     * if it is not valid throw a ChallengeVerificationException. 
-     * 
-     * If it is valid, return any additional state data that will be merged and 
+     * Verify the challenge by validating supplied $data and challenge $state,
+     * if it is not valid throw a ChallengeVerificationException.
+     *
+     * If it is valid, return any additional state data that will be merged and
      * persisted with the challenges existing state.
-     * 
-     * @param  Challengeable $user  
-     * @param  array         $state 
-     * @param  array         $data  
-     * @return aray               
+     *
+     * @param Challengeable $user
+     * @param array         $state
+     * @param array         $data
+     *
+     * @return aray
      */
     public function verify(Challengeable $user, array $state = [], array $data = []): array
     {
@@ -59,18 +60,19 @@ class NotificationMethod extends Method implements MethodContract
             return [];
         }
 
-        throw new ChallengeVerificationException;
+        throw new ChallengeVerificationException();
     }
 
     /**
      * Set the notification to the user.
-     * 
-     * @param  string $token
+     *
+     * @param string $token
+     *
      * @return \Illuminate\Notifications\Notification
      */
     protected function notification($token)
     {
-        // Use the configured notification if 
+        // Use the configured notification if
         // one is available.
         if (isset($this->config['notification'])) {
             return new $this->config['notification'](

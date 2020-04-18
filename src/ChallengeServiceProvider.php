@@ -19,7 +19,7 @@ class ChallengeServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            $this->packagePath('config/challenge.php'), 
+            $this->packagePath('config/challenge.php'),
             'challenge'
         );
 
@@ -32,12 +32,12 @@ class ChallengeServiceProvider extends ServiceProvider
 
     /**
      * Register the method manager.
-     * 
+     *
      * @return void
      */
     protected function registerMethodManager()
     {
-        $this->app->singleton(Methods\MethodManager::class, function($app) {
+        $this->app->singleton(Methods\MethodManager::class, function ($app) {
             return new Methods\MethodManager($app);
         });
 
@@ -46,12 +46,12 @@ class ChallengeServiceProvider extends ServiceProvider
 
     /**
      * Register the authentication broker instance.
-     * 
+     *
      * @return void
      */
     protected function registerAuthBroker()
     {
-        $this->app->bind(BrokerContract::class, function($app) {
+        $this->app->bind(BrokerContract::class, function ($app) {
             $config = config('challenge', []);
 
             return (new AuthBroker($app['auth.challenge.methods'], $config))
@@ -63,11 +63,11 @@ class ChallengeServiceProvider extends ServiceProvider
 
     protected function registerAuthManager()
     {
-        $this->app->singleton(ManagerContract::class, function($app) {
+        $this->app->singleton(ManagerContract::class, function ($app) {
             $config = config('challenge', []);
 
             return new AuthManager(
-                $app['session']->driver(), 
+                $app['session']->driver(),
                 $config
             );
         });
@@ -95,7 +95,7 @@ class ChallengeServiceProvider extends ServiceProvider
 
         // Register the event listeners.
         $this->app['events']->listen(
-            \Illuminate\Auth\Events\Logout::class, 
+            \Illuminate\Auth\Events\Logout::class,
             \BoxedCode\Laravel\Auth\Challenge\Listeners\LogoutListener::class
         );
 
@@ -104,7 +104,7 @@ class ChallengeServiceProvider extends ServiceProvider
 
         // Register the package configuration to publish.
         $this->publishes(
-            [$this->packagePath('config/challenge.php') => config_path('challenge.php')], 
+            [$this->packagePath('config/challenge.php') => config_path('challenge.php')],
             'config'
         );
 
@@ -114,21 +114,20 @@ class ChallengeServiceProvider extends ServiceProvider
 
     /**
      * Setup the packages routing.
-     * 
+     *
      * @return void
      */
     protected function setupRouting()
     {
-        $registerRoutes = function() { 
+        $registerRoutes = function () {
             $this->loadRoutesFrom(
                 $this->packagePath('src/Http/routes.php')
-            ); 
+            );
         };
 
-        Router::macro('challenge', function() use ($registerRoutes) {
+        Router::macro('challenge', function () use ($registerRoutes) {
             $registerRoutes();
         });
-
 
         // Register the routes automatically if required.
         if ($this->app['config']->get('challenge.routing.register') === true) {
@@ -140,6 +139,7 @@ class ChallengeServiceProvider extends ServiceProvider
      * Loads a path relative to the package base directory.
      *
      * @param string $path
+     *
      * @return string
      */
     protected function packagePath($path = '')

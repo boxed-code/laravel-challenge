@@ -2,7 +2,6 @@
 
 namespace BoxedCode\Laravel\Auth\Challenge\Models;
 
-use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\Enrolment as EnrolmentContract;
 use BoxedCode\Laravel\Auth\Challenge\Methods\MethodNameFormatter;
 
@@ -46,7 +45,7 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
 
     /**
      * Get the friendly name for an enrolment.
-     * 
+     *
      * @return string
      */
     public function getLabelAttribute()
@@ -58,9 +57,10 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
 
     /**
      * Enrolment method scope.
-     * 
-     * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  string $method
+     *
+     * @param \Illuminate\Database\Query\EloquentBuilder $query
+     * @param string                                     $method
+     *
      * @return void
      */
     public function scopeMethod($query, $method)
@@ -70,9 +70,10 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
 
     /**
      * Enrolment enrolled status scope.
-     * 
-     * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  sting $method
+     *
+     * @param \Illuminate\Database\Query\EloquentBuilder $query
+     * @param sting                                      $method
+     *
      * @return void
      */
     public function scopeEnrolled($query, $method = null)
@@ -86,9 +87,10 @@ class Enrolment extends \Illuminate\Database\Eloquent\Model implements Enrolment
 
     /**
      * Enrolment enrolling status scope.
-     * 
-     * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  sting $method
+     *
+     * @param \Illuminate\Database\Query\EloquentBuilder $query
+     * @param sting                                      $method
+     *
      * @return void
      */
     public function scopeEnrolling($query, $method = null)

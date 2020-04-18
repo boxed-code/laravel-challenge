@@ -2,7 +2,7 @@
 
 namespace Tests\Integration;
 
-use \Tests\Integration\Support\User;
+use Tests\Integration\Support\User;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -14,7 +14,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
      * In a normal app environment these would be added to the 'providers' array in
      * the config/app.php file.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param \Illuminate\Foundation\Application $app
      *
      * @return array
      */
@@ -38,14 +38,14 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
         // Create a test user.
         $this->testUser = User::create([
-            'name' => 'Test User', 
-            'email' => 'test@user.com',
+            'name'     => 'Test User',
+            'email'    => 'test@user.com',
             'password' => 'password',
         ]);
 
         \Route::get('/', '\Tests\Integration\Support\Controller@home')->middleware([
-            'auth', 
-            \BoxedCode\Laravel\Auth\Challenge\Http\Middleware\RequireAuthentication::class
+            'auth',
+            \BoxedCode\Laravel\Auth\Challenge\Http\Middleware\RequireAuthentication::class,
         ]);
 
         \Route::get('/logout', '\Tests\Integration\Support\Controller@logout')->name('logout');
@@ -54,7 +54,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Define environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param \Illuminate\Foundation\Application $app
+     *
      * @return void
      */
     protected function getEnvironmentSetUp($app)

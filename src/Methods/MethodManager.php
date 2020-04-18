@@ -2,13 +2,13 @@
 
 namespace BoxedCode\Laravel\Auth\Challenge\Methods;
 
-use InvalidArgumentException;
-use Illuminate\Support\Str;
 use Closure;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class MethodManager
 {
-   /**
+    /**
      * The application instance.
      *
      * @var \Illuminate\Foundation\Application
@@ -32,7 +32,8 @@ class MethodManager
     /**
      * Create a new PasswordBroker manager instance.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param \Illuminate\Foundation\Application $app
+     *
      * @return void
      */
     public function __construct($app)
@@ -43,7 +44,8 @@ class MethodManager
     /**
      * Attempt to get the method from the local cache.
      *
-     * @param  string|null  $name
+     * @param string|null $name
+     *
      * @return \Illuminate\Contracts\Auth\PasswordBroker
      */
     public function method($name = null)
@@ -56,10 +58,11 @@ class MethodManager
     /**
      * Resolve the given method.
      *
-     * @param  string  $name
-     * @return \Illuminate\Contracts\Cache\Repository
+     * @param string $name
      *
      * @throws \InvalidArgumentException
+     *
+     * @return \Illuminate\Contracts\Cache\Repository
      */
     protected function resolve($name)
     {
@@ -94,7 +97,7 @@ class MethodManager
 
     /**
      * Get the array of enabled authentication methods.
-     * 
+     *
      * @return array
      */
     public function getEnabledMethods()
@@ -104,22 +107,23 @@ class MethodManager
 
     /**
      * Get a formatted list of the enabled methods.
-     * 
+     *
      * @return \Illuminate\Support\Collection
      */
     public function enabledMethodList()
     {
         $methodNames = $this->getEnabledMethods();
 
-        return collect($methodNames)->mapWithKeys(function($value) {
+        return collect($methodNames)->mapWithKeys(function ($value) {
             return [$value => $this->getConfig($value)['label'] ?? ucwords($value)];
         });
     }
 
     /**
      * Validate the supplied method name actually exists.
-     * 
-     * @param  string $method
+     *
+     * @param string $method
+     *
      * @return bool
      */
     public function validateMethodName($method)
@@ -129,8 +133,9 @@ class MethodManager
 
     /**
      * Create a notification method instance.
-     * 
-     * @param  array $config
+     *
+     * @param array $config
+     *
      * @return \BoxedCode\Laravel\Auth\Challenge\Contracts\Method
      */
     protected function createNotificationMethod($name, $config)
@@ -146,8 +151,9 @@ class MethodManager
     /**
      * Call a custom driver creator.
      *
-     * @param  string $method
-     * @param  array $config
+     * @param string $method
+     * @param array  $config
+     *
      * @return mixed
      */
     protected function callCustomCreator($name, $config)
@@ -158,8 +164,9 @@ class MethodManager
     /**
      * Register a custom driver creator Closure.
      *
-     * @param  string    $driver
-     * @param  \Closure  $callback
+     * @param string   $driver
+     * @param \Closure $callback
+     *
      * @return $this
      */
     public function extend($driver, Closure $callback)
@@ -184,7 +191,8 @@ class MethodManager
     /**
      * Get the password broker configuration.
      *
-     * @param  string  $name
+     * @param string $name
+     *
      * @return array
      */
     protected function getConfig($name)

@@ -47,10 +47,11 @@ class Challenge extends Model implements ChallengeContract
 
     /**
      * Pending challenges scope.
-     * 
-     * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  string $method
-     * @param  string $purpose
+     *
+     * @param \Illuminate\Database\Query\EloquentBuilder $query
+     * @param string                                     $method
+     * @param string                                     $purpose
+     *
      * @return void
      */
     public function scopePending($query, $method = null, $purpose = null)
@@ -68,10 +69,11 @@ class Challenge extends Model implements ChallengeContract
 
     /**
      * Challenge method scope.
-     * 
-     * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  string $method
-     * @param  string|null $purpose
+     *
+     * @param \Illuminate\Database\Query\EloquentBuilder $query
+     * @param string                                     $method
+     * @param string|null                                $purpose
+     *
      * @return void
      */
     public function scopeMethod($query, $method, $purpose = null)
@@ -85,9 +87,10 @@ class Challenge extends Model implements ChallengeContract
 
     /**
      * Challenge method scope.
-     * 
-     * @param  \Illuminate\Database\Query\EloquentBuilder $query
-     * @param  sting $method
+     *
+     * @param \Illuminate\Database\Query\EloquentBuilder $query
+     * @param sting                                      $method
+     *
      * @return void
      */
     public function scopeEnrolment($query, $method)

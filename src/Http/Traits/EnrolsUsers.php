@@ -3,21 +3,18 @@
 namespace BoxedCode\Laravel\Auth\Challenge\Http\Traits;
 
 use BoxedCode\Laravel\Auth\Challenge\AuthBroker;
-use BoxedCode\Laravel\Auth\Challenge\AuthBrokerResponse;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
-use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\Enrolment;
-use BoxedCode\Laravel\Auth\Challenge\Exceptions\ChallengeLogicException;
 use Illuminate\Http\Request;
-use LogicException;
 
 trait EnrolsUsers
 {
     /**
      * Begin the two factor enrolment process.
-     * 
-     * @param  Request $request
-     * @param  string  $method  
+     *
+     * @param Request $request
+     * @param string  $method
+     *
      * @return \Illuminate\Http\Response
      */
     public function begin(Request $request, $method)
@@ -27,7 +24,7 @@ trait EnrolsUsers
         );
 
         $response = $this->broker()->beginEnrolment(
-            $request->user(), 
+            $request->user(),
             $method
         );
 
@@ -35,12 +32,13 @@ trait EnrolsUsers
     }
 
     /**
-     * The enrolment method requires additional setup, the user 
+     * The enrolment method requires additional setup, the user
      * should be redirected to the methods setup form.
-     * 
-     * @param  Request $request      
-     * @param  Enrolment     $enrolment
-     * @return \Illuminate\Http\Response                 
+     *
+     * @param Request   $request
+     * @param Enrolment $enrolment
+     *
+     * @return \Illuminate\Http\Response
      */
     protected function requiresSetup(Request $request, Enrolment $enrolment)
     {
@@ -49,9 +47,10 @@ trait EnrolsUsers
 
     /**
      * Show the enrolment method setup form.
-     * 
-     * @param  Request $request
-     * @param  string  $method
+     *
+     * @param Request $request
+     * @param string  $method
+     *
      * @return \Illuminate\Http\Response
      */
     public function showSetupForm(Request $request, $method)
@@ -61,23 +60,24 @@ trait EnrolsUsers
             $method
         );
 
-        // If the beforeSetup routine was not successful, we route the 
+        // If the beforeSetup routine was not successful, we route the
         // brokers response via the response handler, this determines the next action.
         if (AuthBroker::BEFORE_SETUP_COMPLETE !== (string) $response) {
             return $this->routeResponse($request, $response);
         }
 
         return $this->view('setup', $method, [
-            'setup_data' => $response->data,
-            'form_action_url' => route('challenge.enrolment.setup', [$method])
+            'setup_data'      => $response->data,
+            'form_action_url' => route('challenge.enrolment.setup', [$method]),
         ]);
     }
 
     /**
      * Handle the setup form submission.
-     * 
-     * @param  Request $request
-     * @param  string  $method
+     *
+     * @param Request $request
+     * @param string  $method
+     *
      * @return \Illuminate\Http\Response
      */
     public function setup(Request $request, $method)
@@ -92,12 +92,13 @@ trait EnrolsUsers
     }
 
     /**
-     * The user has been successfully enrolled into the requested 
-     * authentication method and should be shown the enrolment success view. 
-     *      
-     * @param  Request $request      
-     * @param  Enrolment     $enrolment 
-     * @return \Illuminate\Http\Request          
+     * The user has been successfully enrolled into the requested
+     * authentication method and should be shown the enrolment success view.
+     *
+     * @param Request   $request
+     * @param Enrolment $enrolment
+     *
+     * @return \Illuminate\Http\Request
      */
     protected function enrolled(Request $request, Enrolment $enrolment)
     {
@@ -106,9 +107,10 @@ trait EnrolsUsers
 
     /**
      * Show the enrolment success page.
-     * 
-     * @param  Request $request
-     * @param  string  $method  
+     *
+     * @param Request $request
+     * @param string  $method
+     *
      * @return \Illuminate\Http\Response
      */
     public function showEnrolled(Request $request, $method)
@@ -116,16 +118,17 @@ trait EnrolsUsers
         $this->manager()->revokeAuthenticationRequest();
 
         return $this->view('enrolled', $method, [
-            'method' => $method
+            'method' => $method,
         ]);
     }
 
     /**
-     * Handle a request to disenroll the user 
+     * Handle a request to disenroll the user
      * from the requested authentication method.
-     * 
-     * @param  Request $request
-     * @param  string  $method 
+     *
+     * @param Request $request
+     * @param string  $method
+     *
      * @return \Illuminate\Http\Response
      */
     public function disenrol(Request $request, $method)
@@ -137,14 +140,15 @@ trait EnrolsUsers
 
         return $this->routeResponse($request, $response, $method);
     }
-    
+
     /**
-     * The user has been disenrolled for the requested authentication 
+     * The user has been disenrolled for the requested authentication
      * method an should be shown the disenrolment success view.
-     * 
-     * @param  Request $request      
-     * @param  Enrolment     $enrolment 
-     * @return \Illuminate\Http\Request  
+     *
+     * @param Request   $request
+     * @param Enrolment $enrolment
+     *
+     * @return \Illuminate\Http\Request
      */
     protected function disenrolled(Request $request, Enrolment $enrolment)
     {
@@ -153,15 +157,16 @@ trait EnrolsUsers
 
     /**
      * Show the 'successfully disenrolled' page.
-     * 
-     * @param  Request $request
-     * @param  string  $method
+     *
+     * @param Request $request
+     * @param string  $method
+     *
      * @return \Illuminate\Http\Response
      */
     public function showDisenrolled(Request $request, $method)
     {
         return $this->view('disenrolled', $method, [
-            'method' => $method
+            'method' => $method,
         ]);
     }
 }

@@ -8,14 +8,14 @@ class StringTokenGenerator implements TokenGenerator
 {
     /**
      * Configuration.
-     * 
+     *
      * @var array
      */
     protected $config;
 
     /**
      * Create a new generator instance.
-     * 
+     *
      * @param array $config
      */
     public function __construct(array $config = [])
@@ -25,7 +25,7 @@ class StringTokenGenerator implements TokenGenerator
 
     /**
      * Generate a token.
-     * 
+     *
      * @return string
      */
     public function generate()

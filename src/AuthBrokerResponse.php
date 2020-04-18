@@ -6,21 +6,21 @@ class AuthBrokerResponse
 {
     /**
      * The outcome of the response.
-     * 
+     *
      * @var sting
      */
     protected $outcome;
 
     /**
      * Additional data related to the response.
-     * 
+     *
      * @var array
      */
     protected $payload;
 
     /**
      * Create a new response instance.
-     * 
+     *
      * @param string $outcome
      * @param array  $payload
      */
@@ -33,7 +33,7 @@ class AuthBrokerResponse
 
     /**
      * Get the data associated with the response.
-     * 
+     *
      * @return array
      */
     public function getPayload()
@@ -43,8 +43,9 @@ class AuthBrokerResponse
 
     /**
      * Dynamically route calls to the responses payload.
-     * 
-     * @param  string $name
+     *
+     * @param string $name
+     *
      * @return mixed
      */
     public function __get($name)
@@ -55,9 +56,9 @@ class AuthBrokerResponse
     }
 
     /**
-     * Get a string representation of the response, 
+     * Get a string representation of the response,
      * always the outcome.
-     * 
+     *
      * @return string
      */
     public function __toString()

@@ -6,31 +6,29 @@ use BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager as ManagerContract;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable;
 use BoxedCode\Laravel\Auth\Challenge\Events\Verified;
-use Illuminate\Auth\Events\Logout;
 use Illuminate\Contracts\Session\Session;
-use Illuminate\Support\Collection;
 
 class AuthManager implements ManagerContract
 {
     /**
      * Session store instance.
-     * 
+     *
      * @var \Illuminate\Contracts\Session\Session
      */
     protected $session;
 
     /**
      * Configuration.
-     * 
+     *
      * @var array
      */
     protected $config;
 
     /**
      * Create a new session manager instance.
-     * 
+     *
      * @param Session $session
-     * @param array   $config 
+     * @param array   $config
      */
     public function __construct(Session $session, array $config = [])
     {
@@ -41,16 +39,17 @@ class AuthManager implements ManagerContract
 
     /**
      * Create a new authentication request.
-     * 
-     * @param  string $purpose
-     * @param  string $using  
+     *
+     * @param string $purpose
+     * @param string $using
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function requestAuthentication($purpose = null, $using = null)
     {
         $this->session->put('_challenge_auth_request', [
-            'purpose' => $purpose, 
-            'method' => $using, 
+            'purpose'      => $purpose,
+            'method'       => $using,
             'requested_at' => now(),
         ]);
 
@@ -59,7 +58,7 @@ class AuthManager implements ManagerContract
 
     /**
      * Determine whether an authentication request has been made.
-     * 
+     *
      * @return bool
      */
     public function wantsAuthentication()
@@ -69,7 +68,7 @@ class AuthManager implements ManagerContract
 
     /**
      * The 'purpose' of the current authentication request.
-     * 
+     *
      * @return string|null
      */
     public function wantsAuthenticationFor()
@@ -81,7 +80,7 @@ class AuthManager implements ManagerContract
 
     /**
      * The authentication method desired by the current request.
-     * 
+     *
      * @return string|null
      */
     public function wantedAuthenticationMethod()
@@ -93,7 +92,7 @@ class AuthManager implements ManagerContract
 
     /**
      * Revoke the current authentication request.
-     * 
+     *
      * @return void
      */
     public function revokeAuthenticationRequest()
@@ -104,16 +103,18 @@ class AuthManager implements ManagerContract
     /**
      * Determine whether the user has authenticates themselves.
      *
-     * @param  \BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable $user
-     * @param  array|string|null  $method
-     * @param  array|string|null $purpose
-     * @param  integer|null $lifetime
-     * @return boolean        
+     * @param \BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable $user
+     * @param array|string|null                                         $method
+     * @param array|string|null                                         $purpose
+     * @param int|null                                                  $lifetime
+     *
+     * @return bool
      */
-    public function isAuthenticated(Challengeable $user, 
-                                    $method = null, 
-                                    $purpose = null, 
-                                    $lifetime = null
+    public function isAuthenticated(
+        Challengeable $user,
+        $method = null,
+        $purpose = null,
+        $lifetime = null
     ) {
         $methods = (array) $method;
 
@@ -123,13 +124,15 @@ class AuthManager implements ManagerContract
 
         if ($methods) {
             $challenges = $challenges->whereIn(
-                'method', $methods
+                'method',
+                $methods
             );
         }
 
         if ($purposes) {
             $challenges = $challenges->whereIn(
-                'purpose', $purposes
+                'purpose',
+                $purposes
             );
         }
 
@@ -138,9 +141,10 @@ class AuthManager implements ManagerContract
 
     /**
      * Flush the verified challenges for the current user.
-     * 
-     * @param  Challengeable $user
-     * @return void    
+     *
+     * @param Challengeable $user
+     *
+     * @return void
      */
     public function flushChallenges(Challengeable $user)
     {
@@ -149,24 +153,25 @@ class AuthManager implements ManagerContract
 
     /**
      * Determine whether we should enforce two factor authentication for the user.
-     * 
-     * @param  Challengeable $user
-     * @return bool     
+     *
+     * @param Challengeable $user
+     *
+     * @return bool
      */
     public function shouldEnforceFor(Challengeable $user)
     {
         $enforcingStatus = $this->config['enforce'];
 
-        return  (
-            'all' === $enforcingStatus || 
-            'enrolled' === $enforcingStatus && $user->enrolments()->enrolled()->count() > 0
-        );
+        return
+            'all' === $enforcingStatus ||
+            'enrolled' === $enforcingStatus && $user->enrolments()->enrolled()->count() > 0;
     }
 
     /**
      * Get the model associate with an authentication guard.
-     * 
-     * @param  string|null $guard
+     *
+     * @param string|null $guard
+     *
      * @return string
      */
     public function getModelForGuard($guard = null)
@@ -177,7 +182,7 @@ class AuthManager implements ManagerContract
 
         return collect(config('auth.guards'))
             ->map(function ($guard) {
-                if (! isset($guard['provider'])) {
+                if (!isset($guard['provider'])) {
                     return;
                 }
 
@@ -186,10 +191,10 @@ class AuthManager implements ManagerContract
     }
 
     /**
-     * Get the length of time before another challenge/verification 
+     * Get the length of time before another challenge/verification
      * sequence is required.
-     * 
-     * @return integer
+     *
+     * @return int
      */
     protected function getVerificationLifetime()
     {
@@ -200,11 +205,12 @@ class AuthManager implements ManagerContract
      * Get the verified challenges from the store.
      *
      * @param  \BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable $user
+     *
      * @return \Illuminate\Support\Collection
      */
-   protected function getVerifiedChallengesFor(Challengeable $user, $lifetime = null)
+    protected function getVerifiedChallengesFor(Challengeable $user, $lifetime = null)
     {
-        return $user->challenges->filter(function($item) use ($lifetime) {
+        return $user->challenges->filter(function ($item) use ($lifetime) {
             $lifetime = $lifetime ?: $this->getVerificationLifetime();
 
             if ($lifetime > 0) {
@@ -219,7 +225,7 @@ class AuthManager implements ManagerContract
 
     /**
      * Get the session store instance.
-     * 
+     *
      * @return \Illuminate\Contracts\Session\Session
      */
     public function getSessionStore()
@@ -229,7 +235,7 @@ class AuthManager implements ManagerContract
 
     /**
      * Get the current authentication request state.
-     * 
+     *
      * @return array|null
      */
     protected function getAuthRequest()

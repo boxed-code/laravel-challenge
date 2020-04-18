@@ -8,7 +8,7 @@ trait Challengeable
 {
     /**
      * Get the users default authentication method name.
-     * 
+     *
      * @return string|bool
      */
     public function getDefaultAuthMethod()
@@ -19,7 +19,7 @@ trait Challengeable
 
         $enrolments = $this->enrolments()->enrolled()->get();
 
-        $enrolment = $enrolments->filter(function($item) use ($default) {
+        $enrolment = $enrolments->filter(function ($item) use ($default) {
             return $default === $item['method'];
         })->first() ?? $enrolments->first();
 
@@ -27,10 +27,11 @@ trait Challengeable
     }
 
     /**
-     * Determine whether the user can authenticate with 
+     * Determine whether the user can authenticate with
      * the given method.
-     * 
-     * @param  string $method
+     *
+     * @param string $method
+     *
      * @return bool
      */
     public function canAuthenticateUsing($method): bool
@@ -40,7 +41,7 @@ trait Challengeable
 
     /**
      * The users challenge relationship.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function challenges(): HasMany
@@ -53,7 +54,7 @@ trait Challengeable
 
     /**
      * The users enrolments relationship.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function enrolments(): HasMany

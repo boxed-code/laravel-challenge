@@ -27,14 +27,14 @@ class EnrolUser extends Command
 
     /**
      * The authentication broker instance.
-     * 
+     *
      * @var \BoxedCode\Laravel\Auth\Challenge\Contracts\AuthBroker
      */
     protected $broker;
 
     /**
      * The authentication manager instance.
-     * 
+     *
      * @var \BoxedCode\Laravel\Auth\Challenge\Contracts\AuthManager
      */
     protected $manager;
@@ -72,56 +72,63 @@ class EnrolUser extends Command
         // Enrol the user.
         $this->handleBrokerResponse(
             $this->broker->withoutDispatchingChallenges()->beginEnrolment(
-                $user, $this->argument('method')
+                $user,
+                $this->argument('method')
             )
         );
     }
 
     /**
      * Handle responses from the broker.
-     * 
-     * @param  AuthBrokerResponse $response
+     *
+     * @param AuthBrokerResponse $response
+     *
      * @return void
      */
     protected function handleBrokerResponse($response)
     {
-        switch ($response) 
-        {
+        switch ($response) {
             case AuthBroker::METHOD_NOT_FOUND:
                 $this->error('Invalid method specified.');
+
                 return;
 
             case AuthBroker::USER_ALREADY_ENROLLED:
                 $this->error('The user is already enrolled.');
+
                 return;
 
             case AuthBroker::USER_CANNOT_ENROL:
                 $this->error('The user cannot enrol in the requested authentication method.');
+
                 return;
 
             case AuthBroker::METHOD_REQUIRES_SETUP:
                 $this->error(
                     'The authentication method requested cannot be enroled to via the command line as it requires browser based setup.'
                 );
+
                 return;
 
             case AuthBroker::USER_CHALLENGED:
                 $this->handleBrokerResponse(
                     $this->broker->verify(
-                        $response->challenge->user, 
+                        $response->challenge->user,
                         $response->challenge->method
                     )
                 );
+
                 return;
 
             case AuthBroker::USER_ENROLLED:
                 $this->info(
                     sprintf(
-                        'The user id %s was successfully enrolled to %s.', 
-                        $response->enrolment->user->getKey(), 
+                        'The user id %s was successfully enrolled to %s.',
+                        $response->enrolment->user->getKey(),
                         $response->enrolment->method
                     )
                 );
+
                 return;
         }
 

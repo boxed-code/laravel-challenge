@@ -4,8 +4,8 @@ namespace BoxedCode\Laravel\Auth\Challenge\Http\Traits;
 
 trait ProvidesAuthentication
 {
-    use EnrolsUsers, 
-        ChallengesUsers, 
-        RoutesBrokerResponses,
-        Helpers;
+    use EnrolsUsers;
+    use ChallengesUsers;
+    use RoutesBrokerResponses;
+    use Helpers;
 }

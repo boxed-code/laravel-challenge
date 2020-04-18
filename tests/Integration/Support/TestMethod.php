@@ -18,7 +18,7 @@ class TestMethod extends Method implements MethodContract
     {
         return false;
     }
-    
+
     public function challenge(Challengeable $user, array $data = []): array
     {
         return ['code' => \Illuminate\Support\Str::random(5)];
@@ -27,7 +27,7 @@ class TestMethod extends Method implements MethodContract
     public function verify(Challengeable $user, array $state = [], array $data = []): array
     {
         if ($state['code'] !== $data['code']) {
-            throw new ChallengeVerificationException;
+            throw new ChallengeVerificationException();
         }
 
         return [];
