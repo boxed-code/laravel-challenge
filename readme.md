@@ -9,7 +9,10 @@ Simple, multi-method two factor authentication for laravel.
 
  Laravel  | Challengable
 :---------|:----------
- 5.7.x    | dev-master
+ 5.7.x    | 1.x
+ 5.8.x    | 2.x
+ 6.x      | 3.x
+ 7.x      | 4.x
 
 ## Getting Started
 - Install using `composer require boxed-code/laravel-challenge`
