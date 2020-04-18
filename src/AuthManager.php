@@ -204,7 +204,7 @@ class AuthManager implements ManagerContract
     /**
      * Get the verified challenges from the store.
      *
-     * @param  \BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable $user
+     * @param \BoxedCode\Laravel\Auth\Challenge\Contracts\Challengeable $user
      *
      * @return \Illuminate\Support\Collection
      */
