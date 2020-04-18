@@ -27,6 +27,18 @@ trait Challengeable
     }
 
     /**
+     * Determine whether the user can authenticate with 
+     * the given method.
+     * 
+     * @param  string $method
+     * @return bool
+     */
+    public function canAuthenticateUsing($method): bool
+    {
+        return true;
+    }
+
+    /**
      * The users challenge relationship.
      * 
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
