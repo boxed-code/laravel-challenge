@@ -1,18 +1,12 @@
 # Multi-method two factor authentication for Laravel apps.
-![Build Status](https://travis-ci.com/boxed-code/laravel-challenge.svg?branch=4.x)
+![Tests](https://github.com/boxed-code/laravel-challenge/workflows/Tests/badge.svg)
 [![Latest Stable Version](https://poser.pugx.org/boxed-code/laravel-challenge/v/stable)](https://packagist.org/packages/boxed-code/laravel-challenge)
 [![License](https://poser.pugx.org/boxed-code/laravel-challenge/license)](https://packagist.org/packages/boxed-code/laravel-challenge)
 
-![Auth Flow](https://boxedcode.uk/challenge.gif)
+![Auth Flow](https://boxedcode.uk/challenge-new.gif)
 
 ## Version Compatibility
-
- Laravel  | Challengable
-:---------|:----------
- 5.7.x    | 1.x
- 5.8.x    | 2.x
- 6.x      | 3.x
- 7.x      | 4.x
+You'll need PHP >= 7.2.5 and Laravel 5.8, 6.x or 7.x.
 
 ## Getting Started
 A demo project is available at [laravel-challenge-demo](https://github.com/boxed-code/laravel-challenge-demo), see [this commit](https://github.com/boxed-code/laravel-challenge-demo/commit/e7d83c6a719ddafb9412f1aef3285f3bf5a36e55) to view how simple it is to implement.
