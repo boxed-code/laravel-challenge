@@ -36,6 +36,8 @@ class RequireAuthentication
         '/tfa/error',
         '/tfa/dispatch',
         '/tfa/*/verify',
+        '/login',
+        '/logout',
     ];
 
     /**
