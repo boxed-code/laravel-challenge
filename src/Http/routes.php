@@ -1,9 +1,10 @@
 <?php
-$authMiddleware =  config()->get('challenge.routing.middleware');
 
-Route::middleware($authMiddleware)->group(function() {
+$authMiddleware = config()->get('challenge.routing.middleware');
+
+Route::middleware($authMiddleware)->group(function () {
     $authController = config()->get('challenge.routing.controller');
-    
+
     Route::get('/tfa', $authController.'@showMethodSelectionForm')->name('challenge');
     Route::get('/tfa/error', $authController.'@showError')->name('challenge.error');
     Route::post('/tfa/dispatch', $authController.'@challenge')->name('challenge.dispatch')->middleware('throttle:10,1,challenge.dispatch');
@@ -14,5 +15,5 @@ Route::middleware($authMiddleware)->group(function() {
     Route::post('/tfa/{method}/enrol/setup', $authController.'@setup')->middleware('throttle:10,1,challenge.setup');
     Route::get('/tfa/{method}/enrolled', $authController.'@showEnrolled')->name('challenge.enrolled');
     Route::get('/tfa/{method}/disenrol', $authController.'@disenrol');
-    Route::get('/tfa/{method}/disenrolled', $authController.'@showDisenrolled')->name('challenge.disenrolled'); 
+    Route::get('/tfa/{method}/disenrolled', $authController.'@showDisenrolled')->name('challenge.disenrolled');
 });
