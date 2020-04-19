@@ -1,6 +1,6 @@
 {
     "name": "boxed-code/laravel-challenge",
-    "description": "Simple, multi-method two factor authentication for laravel.",
+    "description": "Multi-method two factor authentication for Laravel apps.",
     "type": "library",
     "license": "MIT",
     "authors": [

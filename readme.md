@@ -1,9 +1,7 @@
-# Challenge
+# Multi-method two factor authentication for Laravel apps.
 ![Build Status](https://travis-ci.com/boxed-code/laravel-challenge.svg?branch=4.x)
 [![Latest Stable Version](https://poser.pugx.org/boxed-code/laravel-challenge/v/stable)](https://packagist.org/packages/boxed-code/laravel-challenge)
 [![License](https://poser.pugx.org/boxed-code/laravel-challenge/license)](https://packagist.org/packages/boxed-code/laravel-challenge)
-
-Simple, multi-method two factor authentication for laravel.
 
 ![Auth Flow](https://boxedcode.uk/challenge.gif)
 
@@ -28,7 +26,27 @@ Modify your User model class to implement `\BoxedCode\Laravel\Auth\Challenge\Con
 Next you must add the middleware `\BoxedCode\Laravel\Auth\Challenge\Http\Middleware\RequireAuthentication` to the routes you would like to protect or simply add it to the global stack
 
 ### Further Steps
-Login an enrol yourself to the default 'email' verification method at `http://localhost/tfa/email/enrol`, then logout and in again to be challenged for 2FA via email.
+Login an enrol yourself to the default 'email' authentication method at `http://localhost/tfa/email/enrol`, then logout and in again to be challenged for 2FA via email.
+
+ ## To Document
+ - Overview
+ - Configuration options (challengeable.php)
+ - Authentication methods
+    - Enabling default methods
+        - Email
+        - Twilio SMS
+        - Twilio Voice (WIP)
+        - Google Authenticator [OTP]
+        - Password (WIP)
+    - Custom notification based authentication methods
+    - Custom authentication methods
+- Challenges
+    - Token Generators
+    - Lifetimes & Periodic Re-authentication
+    - Custom Repositories
+ - Authentication for different purposes & lifetimes
+ - Skining / Theming views
+ - Events
 
 ## License
 MIT
