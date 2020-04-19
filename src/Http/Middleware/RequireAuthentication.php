@@ -93,6 +93,7 @@ class RequireAuthentication
     protected function shouldAuthenticate($request, $purposes, $lifetime)
     {
         return
+            ! is_null($request->user()) &&
             !$this->inExceptArray($request) &&
             $this->manager->shouldEnforceFor($request->user()) &&
             !$this->manager->isAuthenticated($request->user(), null, $purposes, $lifetime);
