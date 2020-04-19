@@ -134,6 +134,11 @@ return [
         'register' => true,
 
         /**
+         * Add the following middleware to the automatically registered routes above.
+         */
+        'middleware' => ['web', 'auth'],
+
+        /**
          * Where should we direct the default authentication routes?
          */
         'controller' => \BoxedCode\Laravel\Auth\Challenge\Http\AuthController::class,
