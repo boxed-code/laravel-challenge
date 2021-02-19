@@ -6,7 +6,7 @@
 ![Auth Flow](https://boxedcode.uk/challenge-new.gif)
 
 ## Version Compatibility
-You'll need PHP >= 7.2.5 and Laravel 5.8, 6.x or 7.x.
+You'll need PHP >= 7.4 and Laravel 6.x, 7.x or 8.x.
 
 ## Getting Started
 A demo project is available at [laravel-challenge-demo](https://github.com/boxed-code/laravel-challenge-demo), see [this commit](https://github.com/boxed-code/laravel-challenge-demo/commit/e7d83c6a719ddafb9412f1aef3285f3bf5a36e55) to view how simple it is to implement.
