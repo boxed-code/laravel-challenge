@@ -5,7 +5,7 @@ namespace Tests\Integration;
 use BoxedCode\Laravel\Auth\Challenge\Contracts\Challenge;
 use Illuminate\Encryption\Encrypter;
 
-class EnforcingMiddlewareTestCase extends TestCase
+class EnforcingMiddlewareTest extends TestCase
 {
     protected $mfa;
 
