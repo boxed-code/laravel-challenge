@@ -51,5 +51,10 @@
         "pragmarx/google2fa": "Allows use of Google Authenticator (OTP)",
         "bacon/bacon-qr-code": "Allows local generation of QR code images",
         "laravel-notification-channels/twilio": "Allows the use of twilio SMS & voice"
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/thanks": true
+        }
     }
 }
